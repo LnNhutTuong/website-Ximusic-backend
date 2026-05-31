@@ -1,0 +1,22 @@
+{
+  "name": "jwtbackend",
+  "version": "1.0.0",
+  "description": "JWT NodeJS React",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node src/server.js"
+  },
+  "author": "XimenT",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "7.29.7",
+    "@babel/node": "7.29.7",
+    "@babel/preset-env": "7.29.7",
+    "body-parser": "2.2.2",
+    "dotenv": "17.4.2",
+    "ejs": "6.0.1",
+    "express": "5.2.1",
+    "nodemon": "3.1.14"
+  }
+}

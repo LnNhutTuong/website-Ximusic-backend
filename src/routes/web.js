@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleHellWord, handleUserPage, handleCreateUser } from '../controller/homeController';
+import {handleUserList, handleCreateUser, handleCreateUserPage, handleUpdateUserPage, handleUpdateUser, handleDeleteUser } from '../controller/homeController';
 
 const router = express.Router();
 
@@ -10,12 +10,18 @@ const router = express.Router();
 
 const initWebRoutes = (app) => {
     // get, post, put, delete
-    router.get("/",handleHellWord);
+    router.get("/",handleUserList);
 
-    //users
-    router.get('/users',handleUserPage);
+    //c
+    router.get('/create-page',handleCreateUserPage);
+    router.post('/create-user',handleCreateUser);
 
-    router.post('/users/create-user',handleCreateUser);
+    //u
+    router.get('/update-page/:id', handleUpdateUserPage);
+    router.post('/update-user/:id', handleUpdateUser);
+
+    //d
+    router.post('/delete-user/:id', handleDeleteUser);
 
     return app.use("/", router);
 }

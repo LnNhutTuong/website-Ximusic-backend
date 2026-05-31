@@ -1,15 +1,18 @@
 import express from 'express';
+import { handleHellWord, handleUserPage } from '../controller/homeController';
 
 const router = express.Router();
 
 /**
  * @param {*} app: express app 
  */
+
+
 const initWebRoutes = (app) => {
     // get, post, put, delete
-    router.get('/', (req, res) => {
-        return res.send ("Hell World");
-    })
+    router.get("/",handleHellWord);
+
+    router.get('/users',handleUserPage);
 
     return app.use("/", router);
 }

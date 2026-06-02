@@ -6,6 +6,18 @@ const hashPassword = (password) => {
     return bcrypt.hashSync(password, salt);
 }
 
+const getAllUser = async () => {
+    let users = [];
+    try{
+        users = await db.User.findAll();
+    }
+    catch(error){
+        console.log(">>>>>check error: ", error);
+    }
+    return users;
+}
+
+
 const createNewUser = async (email, password, username) => {
     let userHashPassword = hashPassword(password);
     try{
@@ -16,20 +28,59 @@ const createNewUser = async (email, password, username) => {
     })
     }
     catch(error){
-        console.log(error);
+        console.log(">>>>>check error: ", error);
     }
 }
 
-const getUserById = async (id) => {   
+const getUserById = async (id) => {
+    let user;
+    try{
+      user = await db.User.findOne({
+            where: {
+                id: id
+            }
+        })
+    }catch(error){
+        console.log(">>>Check error: ", error);
+    }
+    return user;
 }
 
-const updateUser = (email, password, username, id) => {
+const updateUser = async (email, password, username, id) => {
+
+    let dataUpdate = {
+        email: email,
+        username: username
+    }
+
+    if(password && password.trim() ){
+        let userHashPassword = hashPassword(password);
+        dataUpdate.passowrd = userHashPassword;
+    }
+
+    try{
+        await db.User.update(
+            dataUpdate
+        ,
+        {where: {
+            id: id
+        }})
+    }catch(error){
+        console.log(">>>>Check error: ", error);
+    }
 }
 
-const getAllUser = async () => {
-}
-
-const deleteUser = (id) => {
+const deleteUser = async (id) => {
+    try{
+        await db.User.destroy({
+            where: {
+                id: id
+            }
+        })
+    }
+    catch(error){
+        console.log(">>>>Check error: ", error)
+    }
 }
 
 module.exports = {

@@ -2,7 +2,6 @@ import {getAllUser, createNewUser, getUserById, updateUser, deleteUser  } from '
 
 const handleUserList = async (req, res ) => {    
     let listUser = await getAllUser();
-    console.log(">>>>>check list: ", listUser);
     return res.render("user/index.ejs", {
         listUser: listUser
     });
@@ -14,39 +13,37 @@ const handleCreateUserPage = (req, res) =>{
     return res.render("user/create.ejs")
 }
 
-const handleCreateUser = (req, res) => {
+const handleCreateUser = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     let username = req.body.username;
     
-    createNewUser(email, password, username);
-    
-    return res.send('ok');
+    await createNewUser(email, password, username);
+
+    return res.redirect('/');
 }
 
 const handleUpdateUserPage = async (req, res) => {
     let id = req.params.id;
     let user = await getUserById(id);
-
-    console.log(">>>>>check user: ", user);
-
+    console.log(">>>Check user: ", user);
     return res.render('user/edit.ejs', {user: user})
 }
 
-const handleUpdateUser = (req, res) => {
+const handleUpdateUser = async (req, res) => {
     let id = req.params.id;
     let email = req.body.email;
     let password = req.body.password;
     let username = req.body.username;
     
-    updateUser(email, password, username, id);
+    await updateUser(email, password, username, id);
 
     return res.redirect('/');
 }
 
-const handleDeleteUser = (req, res) => {
+const handleDeleteUser = async (req, res) => {
     let id = req.params.id;
-    deleteUser(id);
+    await deleteUser(id);
     return res.redirect('/');
 }
 

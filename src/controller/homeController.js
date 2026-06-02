@@ -20,8 +20,8 @@ const handleCreateUser = (req, res) => {
     let username = req.body.username;
     
     createNewUser(email, password, username);
-
-    return res.redirect('/');
+    
+    return res.send('ok');
 }
 
 const handleUpdateUserPage = async (req, res) => {

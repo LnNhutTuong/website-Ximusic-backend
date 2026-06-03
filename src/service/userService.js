@@ -7,6 +7,36 @@ const hashPassword = (password) => {
 }
 
 const getAllUser = async () => {
+
+    //test relationship
+    let newUser = await db.User.findOne({
+        where: {
+            id: 1
+        },
+        attributes: ["id", "username", "email" ],
+        include:{
+            model: db.Group,
+            attributes: ["id", "name", "description" ],
+        },
+        raw: true,
+        nest: true
+    })
+     
+    let role = await db.Role.findAll({
+            include: db.Group, 
+            Where: {
+                id : 1
+            },
+            raw: true,
+            nest: true
+    })
+    
+
+    console.log(">>>>>>check new user: ", newUser);
+    console.log(">>>>>>check new role: ", role);
+
+
+
     let users = [];
     try{
         users = await db.User.findAll();
@@ -55,7 +85,7 @@ const updateUser = async (email, password, username, id) => {
 
     if(password && password.trim() ){
         let userHashPassword = hashPassword(password);
-        dataUpdate.passowrd = userHashPassword;
+        dataUpdate.password = userHashPassword;
     }
 
     try{

@@ -1,5 +1,5 @@
 import express from 'express';
-import {testApi, hanldeRegister} from "../controller/apiController"
+import {hanldeRegister, handleLogin} from "../controller/apiController"
 const router = express.Router();
 
 /**
@@ -9,10 +9,12 @@ const router = express.Router();
 
 const initApiRoutes = (app) => {
 
-    //Api
-    router.get("/test-api", testApi);
+    //Register
     router.post("/register", hanldeRegister)
     
+    //Login
+    router.post("/login", handleLogin);
+
     return app.use("/api/v1", router);
 }
 

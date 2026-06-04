@@ -1,12 +1,6 @@
 
 import authService from "../service/authService";
 
-const testApi = (req, res) => {
-    return res.status(200).json({
-        message: 'ok',
-        data: 'test api'
-    })
-}
 
 const hanldeRegister = async (req, res) => {
     try{
@@ -46,7 +40,16 @@ const hanldeRegister = async (req, res) => {
 
 }
 
-module.exports = {
-    testApi,
-    hanldeRegister
+const handleLogin = async (req, res) => {
+    return await res.status(200).json({
+        EC: 0,
+        EM: "OK",
+        DT: ""
+    });
+}
+
+
+export {
+    hanldeRegister,
+    handleLogin
 }

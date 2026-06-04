@@ -25,7 +25,7 @@ const initWebRoutes = (app) => {
 
 
     //Api
-    app.get("/api/test-api", testApi); 
+    router.get("/api/test-api", testApi); 
     return app.use("/", router);
 }
 

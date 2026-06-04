@@ -12,6 +12,7 @@ const initApiRoutes = (app) => {
     //Api
     router.get("/test-api", testApi);
     router.post("/register", hanldeRegister)
+    
     return app.use("/api/v1", router);
 }
 

@@ -1,85 +1,148 @@
-import bcrypt, { hashSync } from "bcryptjs";
+import bcrypt, { hash, hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
-import db from '../models/index'
-
+import db from "../models/index";
+import { Op } from "sequelize";
 const hashPassword = (password) => {
-    return bcrypt.hashSync(password, salt);
-}
+  return bcrypt.hashSync(password, salt);
+};
 
 const checkEmail = async (userEmail) => {
-    let user = await db.User.findOne({
-        where: {
-            email: userEmail
-        }
-    })
-    
-    if(user){
-        return true;
-    }
+  let user = await db.User.findOne({
+    where: {
+      email: userEmail,
+    },
+  });
 
-    return false;
-}
+  if (user) {
+    return true;
+  }
+
+  return false;
+};
 
 const checkPhone = async (userPhone) => {
-    let user = await db.User.findOne({
-        where: {
-            phone: userPhone
-        }
-    })
-    
-    if(user){
-        return true;
-    }
+  let user = await db.User.findOne({
+    where: {
+      phone: userPhone,
+    },
+  });
 
-    return false;
-}
+  if (user) {
+    return true;
+  }
+
+  return false;
+};
 
 const hanldeRegister = async (rawUserData) => {
-    try{
-        let emailExist = await checkEmail(rawUserData.email);
-        let phoneExist = await checkPhone(rawUserData.phone);
+  try {
+    let emailExist = await checkEmail(rawUserData.email);
+    let phoneExist = await checkPhone(rawUserData.phone);
 
-        if(emailExist){
-            return{
-                EM: 'Email already exists',
-                EC: 1,
-                DT: ''
-            }
-        }
-
-        if(phoneExist){
-            return{
-                EM: 'Phone number already exists',
-                EC: 1,
-                DT: '',
-            }
-        }
-
-        let passwordHash = hashPassword(rawUserData.password);
-        
-        await db.User.create({
-            email: rawUserData.email,
-            phone: rawUserData.phone,
-            username: rawUserData.username,
-            password: passwordHash
-        })
-
-        return{
-                EM: 'Create user successfully',
-                EC: 0,
-                DT: '',
-            }
+    if (emailExist) {
+      return {
+        EM: "Email already exists",
+        EC: 1,
+        DT: "",
+      };
     }
-    catch(error){
-        console.log(">> ERROR << : ", error);
-        return{
-                EM: 'Something went wrong in service...',
-                EC: -2,
-                DT: '',
-            }
+
+    if (phoneExist) {
+      return {
+        EM: "Phone number already exists",
+        EC: 1,
+        DT: "",
+      };
     }
-}
+
+    let passwordHash = hashPassword(rawUserData.password);
+
+    await db.User.create({
+      email: rawUserData.email,
+      phone: rawUserData.phone,
+      username: rawUserData.username,
+      password: passwordHash,
+    });
+
+    return {
+      EM: "Create user successfully",
+      EC: 0,
+      DT: "",
+    };
+  } catch (error) {
+    console.log(">> ERROR << : ", error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
+
+const checkPassword = (inputPassword, password) => {
+  return bcrypt.compareSync(inputPassword, password);
+};
+
+const checkValueLogin = async (valueLogin) => {
+  let user = await db.User.findOne({
+    where: {
+      [Op.or]: [{ email: valueLogin }, { phone: valueLogin }],
+    },
+  });
+
+  if (user) {
+    return user;
+  }
+
+  return false;
+};
+
+const handleLogin = async (rawUserData) => {
+  // console.log(">>>>Check rawUserData: ", rawUserData);
+
+  try {
+    let user = await checkValueLogin(rawUserData.valueLogin);
+
+    if (!user) {
+      return {
+        EM: "Email/Phone number are wrong",
+        EC: 1,
+        DT: "",
+      };
+    }
+
+    console.log("check hash password: ", user.password);
+    console.log("check input password: ", rawUserData.password);
+
+    let isCorrectPassword = await checkPassword(
+      rawUserData.password,
+      user.password,
+    );
+
+    if (!isCorrectPassword) {
+      return {
+        EM: "Password is incorrect",
+        EC: 1,
+        DT: "",
+      };
+    }
+
+    return {
+      EM: "Login successfully",
+      EC: 0,
+      DT: "",
+    };
+  } catch (error) {
+    console.log(">> ERROR << : ", error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
 
 module.exports = {
-    hanldeRegister
-}
+  hanldeRegister,
+  handleLogin,
+};

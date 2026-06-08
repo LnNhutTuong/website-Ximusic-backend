@@ -10,7 +10,7 @@ const hanldeRegister = async (req, res) => {
     ) {
       return res.status(200).json({
         EM: "Missing required parameters", //error message
-        EC: "1", //error code
+        EC: 1, //error code
         DT: "", //data
       });
     }
@@ -18,7 +18,7 @@ const hanldeRegister = async (req, res) => {
     if (req.body.password && req.body.password.length < 6) {
       return res.status(200).json({
         EM: "Password must be at least 6 characters",
-        EC: "1",
+        EC: 1,
         DT: "",
       });
     }
@@ -45,7 +45,7 @@ const handleLogin = async (req, res) => {
     if (!req.body.valueLogin || !req.body.password) {
       return res.status(200).json({
         EM: "Missing required parameters", //error message
-        EC: "1", //error code
+        EC: 1, //error code
         DT: "", //data
       });
     }
@@ -53,7 +53,7 @@ const handleLogin = async (req, res) => {
     if (req.body.password && req.body.password.length < 6) {
       return res.status(200).json({
         EM: "Password must be at least 6 characters",
-        EC: "1", //error code
+        EC: 1, //error code
         DT: "", //data
       });
     }
@@ -67,7 +67,7 @@ const handleLogin = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       EM: "Error from server: " + error, //error message
-      EC: "-1", //error code
+      EC: -1, //error code
       DT: "", //data
     });
   }

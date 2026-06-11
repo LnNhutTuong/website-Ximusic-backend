@@ -223,8 +223,17 @@ const deleteUser = async (id) => {
         id: id,
       },
     });
+    return {
+      EM: "Delete successfully",
+      EC: 0,
+      DT: "",
+    };
   } catch (error) {
-    console.log(">>>>Check error: ", error);
+    return {
+      EM: "Something went wrong..." + error,
+      EC: -2,
+      DT: "",
+    };
   }
 };
 

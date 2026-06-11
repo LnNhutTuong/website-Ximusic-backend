@@ -5,6 +5,7 @@ import {
   handleCreateNewUser,
   getUserWithId,
   handleUpdateUser,
+  handleDelete,
 } from "../controller/userController";
 import { getAllGroup } from "../controller/groupController";
 const router = express.Router();
@@ -25,7 +26,7 @@ const initApiRoutes = (app) => {
   router.post("/user/create", handleCreateNewUser);
   router.get("/user/read-detail/:id", getUserWithId);
   router.put("/user/update/:id", handleUpdateUser);
-
+  router.delete("/user/delete/:id", handleDelete);
   //Group
   router.get("/group/read", getAllGroup);
 

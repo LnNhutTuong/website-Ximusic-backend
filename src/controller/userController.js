@@ -3,6 +3,7 @@ import {
   createNewUser,
   getUserById,
   updateUser,
+  deleteUser,
 } from "../service/userService";
 
 const getAllUser = async (req, res) => {
@@ -93,4 +94,20 @@ const handleUpdateUser = async (req, res) => {
   });
 };
 
-export { getAllUser, handleCreateNewUser, getUserWithId, handleUpdateUser };
+const handleDelete = async (req, res) => {
+  const userId = req.params.id;
+
+  let data = await deleteUser(userId);
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+export {
+  getAllUser,
+  handleCreateNewUser,
+  getUserWithId,
+  handleUpdateUser,
+  handleDelete,
+};

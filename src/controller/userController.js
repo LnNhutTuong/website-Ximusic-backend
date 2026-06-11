@@ -1,4 +1,4 @@
-import { fetchAllUser } from "../service/userService";
+import { fetchAllUser, createNewUser } from "../service/userService";
 
 const getAllUser = async (req, res) => {
   try {
@@ -42,4 +42,13 @@ const getAllUser = async (req, res) => {
   }
 };
 
-export { getAllUser };
+const handleCreateNewUser = async (req, res) => {
+  let data = await createNewUser(req.body);
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+
+export { getAllUser, handleCreateNewUser };

@@ -1,7 +1,6 @@
 import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
-
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -44,16 +43,78 @@ const fetchAllUser = async (page, limit) => {
   }
 };
 
-const createNewUser = async (email, password, username) => {
-  let userHashPassword = hashPassword(password);
+const checkEmail = async (userEmail) => {
+  let user = await db.User.findOne({
+    where: {
+      email: userEmail,
+    },
+  });
+
+  if (user) {
+    return true;
+  }
+
+  return false;
+};
+
+const checkPhone = async (userPhone) => {
+  let user = await db.User.findOne({
+    where: {
+      phone: userPhone,
+    },
+  });
+
+  if (user) {
+    return true;
+  }
+
+  return false;
+};
+
+const createNewUser = async (rawData) => {
   try {
-    await db.User.create({
-      email: email,
+    let userHashPassword = hashPassword(rawData.password);
+
+    let emailExist = await checkEmail(rawData.email);
+    let phoneExist = await checkPhone(rawData.phone);
+
+    if (emailExist) {
+      return {
+        EM: "Email is exist",
+        EC: -1,
+        DT: rawData,
+      };
+    }
+
+    if (phoneExist) {
+      return {
+        EM: "Phone is exist",
+        EC: -1,
+        DT: rawData,
+      };
+    }
+
+    let newUser = await db.User.create({
+      email: rawData.email,
       password: userHashPassword,
-      username: username,
+      username: rawData.username,
+      phone: rawData.phone,
+      address: rawData.address,
+      sex: rawData.sex,
+      groupId: rawData.groupId,
     });
+
+    return {
+      EM: "Create new user successfully",
+      EC: 0,
+      DT: rawData,
+    };
   } catch (error) {
-    console.log(">>>>>check error: ", error);
+    return {
+      EM: "Something went wrong..." + error,
+      EC: -2,
+      DT: "",
+    };
   }
 };
 

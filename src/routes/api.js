@@ -1,6 +1,7 @@
 import express from "express";
 import { hanldeRegister, handleLogin } from "../controller/apiController";
-import { getAllUser } from "../controller/userController";
+import { getAllUser, handleCreateNewUser } from "../controller/userController";
+import { getAllGroup } from "../controller/groupController";
 const router = express.Router();
 
 /**
@@ -16,6 +17,10 @@ const initApiRoutes = (app) => {
 
   //User
   router.get("/user/read", getAllUser);
+  router.post("/user/create", handleCreateNewUser);
+
+  //Group
+  router.get("/group/read", getAllGroup);
 
   return app.use("/api/v1", router);
 };

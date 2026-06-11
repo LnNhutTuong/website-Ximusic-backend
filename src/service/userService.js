@@ -1,6 +1,7 @@
 import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
+import { Op, where } from "sequelize";
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -43,11 +44,22 @@ const fetchAllUser = async (page, limit) => {
   }
 };
 
-const checkEmail = async (userEmail) => {
+const checkEmail = async (userEmail, userId = null) => {
+  //điều kiện là cái mail
+  let whereCondition = {
+    email: userEmail,
+  };
+
+  //nếu có userId thì chạy vào đây
+  if (userId) {
+    whereCondition.id = {
+      // lấy id của cái mail đang tìm
+      [Op.ne]: userId, //loại trừ cái id này ra
+    };
+  }
+
   let user = await db.User.findOne({
-    where: {
-      email: userEmail,
-    },
+    where: whereCondition,
   });
 
   if (user) {
@@ -57,11 +69,22 @@ const checkEmail = async (userEmail) => {
   return false;
 };
 
-const checkPhone = async (userPhone) => {
+const checkPhone = async (userPhone, userId = null) => {
+  //điều kiện là cái mail
+  let whereCondition = {
+    phone: userPhone,
+  };
+
+  //nếu có userId thì chạy vào đây
+  if (userId) {
+    whereCondition.id = {
+      // lấy id của cái mail đang tìm
+      [Op.ne]: userId, //loại trừ cái id này ra
+    };
+  }
+
   let user = await db.User.findOne({
-    where: {
-      phone: userPhone,
-    },
+    where: whereCondition,
   });
 
   if (user) {
@@ -125,32 +148,71 @@ const getUserById = async (id) => {
       where: {
         id: id,
       },
+      attributes: { exclude: ["password"] },
     });
+
+    return {
+      EM: "Get user by Id successfully",
+      EC: 0,
+      DT: user,
+    };
   } catch (error) {
-    console.log(">>>Check error: ", error);
+    return {
+      EM: "Something went wrong..." + error,
+      EC: -2,
+      DT: "",
+    };
   }
-  return user;
 };
 
-const updateUser = async (email, password, username, id) => {
-  let dataUpdate = {
-    email: email,
-    username: username,
-  };
-
-  if (password && password.trim()) {
-    let userHashPassword = hashPassword(password);
-    dataUpdate.password = userHashPassword;
-  }
-
+const updateUser = async (id, rawData) => {
   try {
-    await db.User.update(dataUpdate, {
-      where: {
-        id: id,
+    let emailExist = await checkEmail(rawData.email, id);
+    let phoneExist = await checkPhone(rawData.phone, id);
+
+    if (emailExist) {
+      return {
+        EM: "Email is exist",
+        EC: -1,
+        DT: rawData,
+      };
+    }
+
+    if (phoneExist) {
+      return {
+        EM: "Phone is exist",
+        EC: -1,
+        DT: rawData,
+      };
+    }
+
+    let userApterUpdate = await db.User.update(
+      {
+        email: rawData.email,
+        username: rawData.username,
+        phone: rawData.phone,
+        address: rawData.address,
+        sex: rawData.sex,
+        groupId: rawData.groupId,
       },
-    });
+      {
+        where: {
+          id: id,
+        },
+      },
+    );
+
+    return {
+      EM: "Update successfully",
+      EC: 0,
+      DT: userApterUpdate,
+    };
   } catch (error) {
-    console.log(">>>>Check error: ", error);
+    return {
+      EM: "Something went wrong..." + error,
+      EC: -2,
+      DT: "",
+    };
   }
 };
 

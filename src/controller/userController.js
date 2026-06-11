@@ -1,4 +1,9 @@
-import { fetchAllUser, createNewUser } from "../service/userService";
+import {
+  fetchAllUser,
+  createNewUser,
+  getUserById,
+  updateUser,
+} from "../service/userService";
 
 const getAllUser = async (req, res) => {
   try {
@@ -51,4 +56,41 @@ const handleCreateNewUser = async (req, res) => {
   });
 };
 
-export { getAllUser, handleCreateNewUser };
+const getUserWithId = async (req, res) => {
+  const userId = req.params.id;
+
+  let data = await getUserById(userId);
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+
+const handleUpdateUser = async (req, res) => {
+  const userId = req.params.id;
+
+  if (
+    !req.body.email ||
+    !req.body.username ||
+    !req.body.address ||
+    !req.body.sex ||
+    !req.body.phone ||
+    !req.body.groupId
+  ) {
+    return res.status(200).json({
+      EM: "Missing required parameters", //error message
+      EC: -1, //error code
+      DT: "", //data
+    });
+  }
+  let data = await updateUser(userId, req.body);
+
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+
+export { getAllUser, handleCreateNewUser, getUserWithId, handleUpdateUser };

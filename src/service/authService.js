@@ -2,6 +2,9 @@ import bcrypt, { hash, hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
 import { Op } from "sequelize";
+import { getGroupWithRoles } from "./JWTService";
+import { createJwt } from "../middleware/JWTAction";
+require("dotenv").config();
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -62,7 +65,10 @@ const hanldeRegister = async (rawUserData) => {
       phone: rawUserData.phone,
       username: rawUserData.username,
       password: passwordHash,
+      groupId: 2,
     });
+
+    //Create token
 
     return {
       EM: "Create user successfully",
@@ -111,9 +117,6 @@ const handleLogin = async (rawUserData) => {
       };
     }
 
-    console.log("check hash password: ", user.password);
-    console.log("check input password: ", rawUserData.password);
-
     let isCorrectPassword = await checkPassword(
       rawUserData.password,
       user.password,
@@ -127,15 +130,29 @@ const handleLogin = async (rawUserData) => {
       };
     }
 
+    //create token
+
+    //get user
+    let groupWithRoles = await getGroupWithRoles(user);
+
+    let payload = {
+      email: user.email,
+      groupWithRoles,
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    };
+    let token = await createJwt(payload);
+
     return {
       EM: "Login successfully",
       EC: 0,
-      DT: "",
+      DT: {
+        access_token: token,
+        groupWithRoles,
+      },
     };
   } catch (error) {
-    console.log(">> ERROR << : ", error);
     return {
-      EM: "Something went wrong in service...",
+      EM: "Something went wrong in service... /" + error,
       EC: -2,
       DT: "",
     };

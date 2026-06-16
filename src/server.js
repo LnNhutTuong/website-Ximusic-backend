@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 8081;
 import bodyParser from "body-parser";
 import connectionDB from "./configs/database";
 import configCors from "./configs/cors";
-
 //config view engine
 configViewEngine(app);
 

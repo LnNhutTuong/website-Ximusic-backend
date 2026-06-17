@@ -8,26 +8,33 @@ import {
   handleDelete,
 } from "../controller/userController";
 import { getAllGroup } from "../controller/groupController";
+import { checkJWT, checkPermission } from "../middleware/JWTAction";
 const router = express.Router();
 
 /**
  * @param {*} app: express app
  */
 
-const testMiddleware = (req, res, next) => {
-  console.log(">>>>>>calling a middleware");
-  next();
-};
+// const checkUserLogin = (req, res, next) => {
+//   const nonSecurePaths = ["/", "/register", "/login"];
+//   if (nonSecurePaths.includes(req.path)) return next();
+
+//   //authenticate user
+//   if (user) {
+//     next();
+//   } else {
+//   }
+// };
 
 const initApiRoutes = (app) => {
   //Register
   router.post("/register", hanldeRegister);
 
   //Login
-  router.post("/login", testMiddleware, handleLogin);
+  router.post("/login", handleLogin);
 
   //User
-  router.get("/user/read", getAllUser);
+  router.get("/user/read", checkJWT, checkPermission, getAllUser);
   router.post("/user/create", handleCreateNewUser);
   router.get("/user/read-detail/:id", getUserWithId);
   router.put("/user/update/:id", handleUpdateUser);

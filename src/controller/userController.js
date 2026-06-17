@@ -8,6 +8,7 @@ import {
 
 const getAllUser = async (req, res) => {
   try {
+    console.log(">>>>check req.user: ", req.user);
     if (!req.query.page || !req.query.limit) {
       return {
         EM: "Missing required parameters", //error message
@@ -40,7 +41,7 @@ const getAllUser = async (req, res) => {
       DT: data.DT, //data
     });
   } catch (error) {
-    return res.status(500).json({
+    return await res.status(500).json({
       EM: "Error from server" + error, //error message
       EC: -1, //error code
       DT: "", //data

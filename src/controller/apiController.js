@@ -61,6 +61,10 @@ const handleLogin = async (req, res) => {
     let data = await authService.handleLogin(req.body);
 
     //set cookie
+    res.clearCookie("jwt", {
+      path: "/",
+    });
+
     res.cookie("jwt", data.DT.access_token, {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,

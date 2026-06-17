@@ -1,4 +1,5 @@
 require("dotenv").config();
+import { response } from "express";
 import jwt from "jsonwebtoken";
 
 const createJwt = (payload) => {
@@ -14,18 +15,78 @@ const createJwt = (payload) => {
 
 const verifyToken = (token) => {
   let key = process.env.JWT_SECRET;
-  let data = null;
+  let decoded = null;
 
   try {
-    let decoded = jwt.verify(token, key);
-    data = decoded;
+    decoded = jwt.verify(token, key);
   } catch (e) {
-    console.log(">>>Check error: ", err);
+    console.log(">>>Check error: ", e);
   }
-  return data;
+  return decoded;
+};
+
+const checkJWT = (req, res, next) => {
+  let cookies = req.cookies;
+
+  if (cookies && cookies.jwt) {
+    let token = cookies.jwt;
+    let decoded = verifyToken(token);
+
+    if (decoded) {
+      req.user = decoded;
+      next();
+    } else {
+      return res.status(401).json({
+        EC: -1,
+        EM: "Invalid token",
+        DT: "",
+      });
+    }
+  } else {
+    return res.status(401).json({
+      EC: -1,
+      EM: "Token not found",
+      DT: "",
+    });
+  }
+};
+
+const checkPermission = (req, res, next) => {
+  if (req.user) {
+    let email = req.user.email;
+    let roles = req.user.groupWithRoles.Roles;
+    let currenUrl = req.path;
+
+    if (!roles || roles.length === 0) {
+      return res.status(403).json({
+        EC: -1,
+        EM: `You don't have permission to access this resource...`,
+        DT: "",
+      });
+    }
+    let canAccess = roles.some((item) => item.url === currenUrl);
+
+    if (canAccess) {
+      next();
+    } else {
+      return res.status(403).json({
+        EC: -1,
+        EM: `You don't have permission to access this resource...`,
+        DT: "",
+      });
+    }
+  } else {
+    return res.status(401).json({
+      EC: -1,
+      EM: "Token not found",
+      DT: "",
+    });
+  }
 };
 
 module.exports = {
   createJwt,
   verifyToken,
+  checkJWT,
+  checkPermission,
 };

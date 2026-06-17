@@ -59,6 +59,11 @@ const handleLogin = async (req, res) => {
     }
 
     let data = await authService.handleLogin(req.body);
+
+    //set cookie
+    res.cookie("jwt", data.DT.access_token, { httpOnly: true });
+
+    //
     return await res.status(200).json({
       EC: data.EC,
       EM: data.EM,

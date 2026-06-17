@@ -14,12 +14,17 @@ const router = express.Router();
  * @param {*} app: express app
  */
 
+const testMiddleware = (req, res, next) => {
+  console.log(">>>>>>calling a middleware");
+  next();
+};
+
 const initApiRoutes = (app) => {
   //Register
   router.post("/register", hanldeRegister);
 
   //Login
-  router.post("/login", handleLogin);
+  router.post("/login", testMiddleware, handleLogin);
 
   //User
   router.get("/user/read", getAllUser);

@@ -104,8 +104,6 @@ const checkValueLogin = async (valueLogin) => {
 };
 
 const handleLogin = async (rawUserData) => {
-  // console.log(">>>>Check rawUserData: ", rawUserData);
-
   try {
     let user = await checkValueLogin(rawUserData.valueLogin);
 

@@ -135,6 +135,7 @@ const handleLogin = async (rawUserData) => {
 
     let payload = {
       email: user.email,
+      username: user.username,
       groupWithRoles,
       expiresIn: process.env.JWT_EXPIRES_IN,
     };
@@ -144,6 +145,8 @@ const handleLogin = async (rawUserData) => {
       EM: "Login successfully",
       EC: 0,
       DT: {
+        email: user.email,
+        username: user.username,
         access_token: token,
         groupWithRoles,
       },

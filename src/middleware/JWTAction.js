@@ -34,6 +34,7 @@ const checkJWT = (req, res, next) => {
 
     if (decoded) {
       req.user = decoded;
+      req.token = token;
       next();
     } else {
       return res.status(401).json({
@@ -71,7 +72,7 @@ const checkPermission = (req, res, next) => {
     } else {
       return res.status(403).json({
         EC: -1,
-        EM: `You don't have permission to access this resource...`,
+        EM: `You don't have permission to access this URL, please stop baby ♥...`,
         DT: "",
       });
     }

@@ -29,8 +29,9 @@ connectionDB();
 initApiRoutes(app);
 
 app.use((req, res) => {
-  return res.send("404 not found");
+  return res.send("Yeah");
 });
+
 app.listen(PORT, () => {
   console.log(">>>> JWT Backend is running on PORT = " + PORT);
 });

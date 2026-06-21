@@ -6,41 +6,48 @@ import {
   getUserWithId,
   handleUpdateUser,
   handleDelete,
+  getUserAccount,
 } from "../controller/userController";
 import { getAllGroup } from "../controller/groupController";
 import { checkJWT, checkPermission } from "../middleware/JWTAction";
-const router = express.Router();
+const router = express.Router(); // router cha
 
 /**
  * @param {*} app: express app
  */
 
-// const checkUserLogin = (req, res, next) => {
-//   const nonSecurePaths = ["/", "/register", "/login"];
-//   if (nonSecurePaths.includes(req.path)) return next();
-
-//   //authenticate user
-//   if (user) {
-//     next();
-//   } else {
-//   }
-// };
-
 const initApiRoutes = (app) => {
-  //Register
-  router.post("/register", hanldeRegister);
+  const privateRouter = express.Router(); // router con
+  const publicRouter = express.Router(); // router con
 
+  //PUBLIC ROUTE
+  //Account
+  publicRouter.get("/account", checkJWT, getUserAccount);
+  //Register
+  publicRouter.post("/register", hanldeRegister);
   //Login
-  router.post("/login", handleLogin);
+  publicRouter.post("/login", handleLogin);
+
+  router.use(publicRouter);
+
+  //OUTLINE
+
+  //PRIVATE ROUTE
+  //middleware
+  privateRouter.use(checkJWT);
+  privateRouter.use(checkPermission);
 
   //User
-  router.get("/user/read", checkJWT, checkPermission, getAllUser);
-  router.post("/user/create", handleCreateNewUser);
-  router.get("/user/read-detail/:id", getUserWithId);
-  router.put("/user/update/:id", handleUpdateUser);
-  router.delete("/user/delete/:id", handleDelete);
+  privateRouter.get("/user/read", getAllUser);
+  privateRouter.post("/user/create", handleCreateNewUser);
+  privateRouter.get("/user/read-detail/:id", getUserWithId);
+  privateRouter.put("/user/update/:id", handleUpdateUser);
+  privateRouter.delete("/user/delete/:id", handleDelete);
+
   //Group
-  router.get("/group/read", getAllGroup);
+  privateRouter.get("/group/read", getAllGroup);
+
+  router.use(privateRouter);
 
   return app.use("/api/v1", router);
 };

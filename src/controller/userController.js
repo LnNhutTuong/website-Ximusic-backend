@@ -8,7 +8,6 @@ import {
 
 const getAllUser = async (req, res) => {
   try {
-    console.log(">>>>check req.user: ", req.user);
     if (!req.query.page || !req.query.limit) {
       return {
         EM: "Missing required parameters", //error message
@@ -105,10 +104,25 @@ const handleDelete = async (req, res) => {
     DT: data.DT, //data
   });
 };
+
+const getUserAccount = async (req, res) => {
+  return res.status(200).json({
+    EM: "ok",
+    EC: 0,
+    DT: {
+      email: req.user.email,
+      username: req.user.username,
+      access_token: req.token,
+      groupWithRoles: req.user.groupWithRoles,
+    },
+  });
+};
+
 export {
   getAllUser,
   handleCreateNewUser,
   getUserWithId,
   handleUpdateUser,
   handleDelete,
+  getUserAccount,
 };

@@ -1,12 +1,14 @@
 require("dotenv").config();
 import { response } from "express";
 import jwt from "jsonwebtoken";
-
+import { match } from "path-to-regexp";
 const createJwt = (payload) => {
   let key = process.env.JWT_SECRET;
   let token = null;
   try {
-    token = jwt.sign(payload, key);
+    token = jwt.sign(payload, key, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
   } catch (error) {
     console.log(">>>>>>>>Check error: ", error);
   }
@@ -24,16 +26,28 @@ const verifyToken = (token) => {
   }
   return decoded;
 };
+const extractToken = (req) => {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "Bearer"
+  ) {
+    return req.headers.authorization.split(" ")[1];
+  }
+  return null;
+};
 
 const checkJWT = (req, res, next) => {
   let cookies = req.cookies;
+  let tokenFromHeader = extractToken(req);
 
-  if (cookies && cookies.jwt) {
-    let token = cookies.jwt;
+  if ((cookies && cookies.jwt) || tokenFromHeader) {
+    let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
+
     let decoded = verifyToken(token);
 
     if (decoded) {
       req.user = decoded;
+      console.log(">>>>>>>>check user: ", req.user);
       req.token = token;
       next();
     } else {
@@ -56,7 +70,7 @@ const checkPermission = (req, res, next) => {
   if (req.user) {
     let email = req.user.email;
     let roles = req.user.groupWithRoles.Roles;
-    let currenUrl = req.path;
+    let currentUrl = req.path;
 
     if (!roles || roles.length === 0) {
       return res.status(403).json({
@@ -65,7 +79,10 @@ const checkPermission = (req, res, next) => {
         DT: "",
       });
     }
-    let canAccess = roles.some((item) => item.url === currenUrl);
+
+    let canAccess = roles.some((item) => {
+      return match(item.url)(currentUrl);
+    });
 
     if (canAccess) {
       next();

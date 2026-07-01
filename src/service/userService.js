@@ -2,6 +2,8 @@ import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
 import { Op, where } from "sequelize";
+
+import { checkIsArtist } from "./artistService";
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -16,7 +18,7 @@ const fetchAllUser = async (page, limit) => {
       attributes: [
         "id",
         "email",
-        "username",
+        "displayName",
         "groupId",
         "createdAt",
         "updatedAt",
@@ -24,6 +26,7 @@ const fetchAllUser = async (page, limit) => {
       include: [
         {
           model: db.Group,
+          as: "group",
           attributes: ["name"],
         },
       ],
@@ -120,7 +123,7 @@ const createNewUser = async (rawData) => {
     let newUser = await db.User.create({
       email: rawData.email,
       password: userHashPassword,
-      username: rawData.username,
+      displayName: rawData.displayName,
       phone: rawData.phone,
       address: rawData.address,
       sex: rawData.sex,
@@ -143,6 +146,7 @@ const createNewUser = async (rawData) => {
 
 const getUserById = async (id) => {
   let user;
+  let artist;
   try {
     user = await db.User.findOne({
       where: {
@@ -151,10 +155,12 @@ const getUserById = async (id) => {
       attributes: { exclude: ["password"] },
     });
 
+    artist = await checkIsArtist(user.id);
+
     return {
       EM: "Get user by Id successfully",
       EC: 0,
-      DT: user,
+      DT: { information: user, artist },
     };
   } catch (error) {
     return {
@@ -189,7 +195,7 @@ const updateUser = async (id, rawData) => {
     let userApterUpdate = await db.User.update(
       {
         email: rawData.email,
-        username: rawData.username,
+        displayName: rawData.displayName,
         phone: rawData.phone,
         address: rawData.address,
         sex: rawData.sex,

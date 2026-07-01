@@ -73,7 +73,7 @@ const handleUpdateUser = async (req, res) => {
 
   if (
     !req.body.email ||
-    !req.body.username ||
+    !req.body.displayName ||
     !req.body.address ||
     !req.body.sex ||
     !req.body.phone ||
@@ -111,7 +111,7 @@ const getUserAccount = async (req, res) => {
     EC: 0,
     DT: {
       email: req.user.email,
-      username: req.user.username,
+      displayName: req.user.displayName,
       access_token: req.token,
       groupWithRoles: req.user.groupWithRoles,
     },

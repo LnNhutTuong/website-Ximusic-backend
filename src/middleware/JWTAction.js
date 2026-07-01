@@ -47,7 +47,6 @@ const checkJWT = (req, res, next) => {
 
     if (decoded) {
       req.user = decoded;
-      console.log(">>>>>>>>check user: ", req.user);
       req.token = token;
       next();
     } else {
@@ -69,7 +68,7 @@ const checkJWT = (req, res, next) => {
 const checkPermission = (req, res, next) => {
   if (req.user) {
     let email = req.user.email;
-    let roles = req.user.groupWithRoles.Roles;
+    let roles = req.user.groupWithRoles?.roles;
     let currentUrl = req.path;
 
     if (!roles || roles.length === 0) {
@@ -81,7 +80,15 @@ const checkPermission = (req, res, next) => {
     }
 
     let canAccess = roles.some((item) => {
-      return match(item.url)(currentUrl);
+      const matchUrl = match(item.url)(currentUrl);
+
+      if (matchUrl) {
+        return true;
+      } else {
+        const regex = new RegExp(`^${item.url}/\\d+$`);
+        return regex.test(currentUrl);
+      }
+      ``;
     });
 
     if (canAccess) {

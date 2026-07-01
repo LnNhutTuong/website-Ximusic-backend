@@ -6,8 +6,8 @@ const app = express();
 const PORT = process.env.PORT || 8081;
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import connectionDB from "./configs/database";
 import configCors from "./configs/cors";
+const db = require("./models/index");
 
 //config view engine
 configViewEngine(app);
@@ -23,6 +23,14 @@ app.use(cookieParser());
 configCors(app);
 
 //test connection
+const connectionDB = async () => {
+  try {
+    await db.sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
 connectionDB();
 
 //init api routes

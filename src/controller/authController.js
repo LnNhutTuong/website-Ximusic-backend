@@ -2,12 +2,7 @@ import authService from "../service/authService";
 
 const hanldeRegister = async (req, res) => {
   try {
-    if (
-      !req.body.email ||
-      !req.body.username ||
-      !req.body.phone ||
-      !req.body.password
-    ) {
+    if (!req.body.email || !req.body.displayName || !req.body.password) {
       return res.status(200).json({
         EM: "Missing required parameters", //error message
         EC: 1, //error code

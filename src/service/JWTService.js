@@ -6,6 +6,7 @@ const getGroupWithRoles = async (user) => {
     include: [
       {
         model: db.Role,
+        as: "roles",
         attributes: ["id", "url", "description"],
         through: { attributes: [] },
       },
@@ -13,8 +14,6 @@ const getGroupWithRoles = async (user) => {
   });
 
   return roles ? roles : {};
-
-  // console.log(">>>>>>check roles: ", roles);
 };
 
 module.exports = {

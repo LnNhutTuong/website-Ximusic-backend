@@ -5,6 +5,7 @@ import { Op } from "sequelize";
 import { getGroupWithRoles } from "./JWTService";
 import { createJwt } from "../middleware/JWTAction";
 require("dotenv").config();
+
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -23,24 +24,9 @@ const checkEmail = async (userEmail) => {
   return false;
 };
 
-const checkPhone = async (userPhone) => {
-  let user = await db.User.findOne({
-    where: {
-      phone: userPhone,
-    },
-  });
-
-  if (user) {
-    return true;
-  }
-
-  return false;
-};
-
 const hanldeRegister = async (rawUserData) => {
   try {
     let emailExist = await checkEmail(rawUserData.email);
-    let phoneExist = await checkPhone(rawUserData.phone);
 
     if (emailExist) {
       return {
@@ -50,22 +36,13 @@ const hanldeRegister = async (rawUserData) => {
       };
     }
 
-    if (phoneExist) {
-      return {
-        EM: "Phone number already exists",
-        EC: 1,
-        DT: "",
-      };
-    }
-
     let passwordHash = hashPassword(rawUserData.password);
 
     await db.User.create({
       email: rawUserData.email,
-      phone: rawUserData.phone,
-      username: rawUserData.username,
+      displayName: rawUserData.displayName,
       password: passwordHash,
-      groupId: 2,
+      groupId: 3,
     });
 
     //Create token
@@ -92,7 +69,7 @@ const checkPassword = (inputPassword, password) => {
 const checkValueLogin = async (valueLogin) => {
   let user = await db.User.findOne({
     where: {
-      [Op.or]: [{ email: valueLogin }, { phone: valueLogin }],
+      [Op.or]: [{ email: valueLogin }],
     },
   });
 
@@ -109,7 +86,7 @@ const handleLogin = async (rawUserData) => {
 
     if (!user) {
       return {
-        EM: "Email/Phone number are wrong",
+        EM: "Email is incorrect",
         EC: 1,
         DT: "",
       };
@@ -135,7 +112,7 @@ const handleLogin = async (rawUserData) => {
 
     let payload = {
       email: user.email,
-      username: user.username,
+      displayName: user.displayName,
       groupWithRoles,
     };
     let token = await createJwt(payload);
@@ -145,7 +122,7 @@ const handleLogin = async (rawUserData) => {
       EC: 0,
       DT: {
         email: user.email,
-        username: user.username,
+        displayName: user.displayName,
         access_token: token,
         groupWithRoles,
       },

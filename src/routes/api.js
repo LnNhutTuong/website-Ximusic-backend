@@ -1,5 +1,5 @@
 import express from "express";
-import { hanldeRegister, handleLogin } from "../controller/apiController";
+import { hanldeRegister, handleLogin } from "../controller/authController";
 import {
   getAllUser,
   handleCreateNewUser,
@@ -8,6 +8,7 @@ import {
   handleDelete,
   getUserAccount,
 } from "../controller/userController";
+
 import { getAllGroup } from "../controller/groupController";
 import { checkJWT, checkPermission } from "../middleware/JWTAction";
 const router = express.Router(); // router cha
@@ -38,14 +39,14 @@ const initApiRoutes = (app) => {
   privateRouter.use(checkPermission);
 
   //User
-  privateRouter.get("/user/read", getAllUser);
+  privateRouter.get("/user", getAllUser);
   privateRouter.post("/user/create", handleCreateNewUser);
-  privateRouter.get("/user/read-detail/:id", getUserWithId);
+  privateRouter.get("/user/:id", getUserWithId);
   privateRouter.put("/user/update/:id", handleUpdateUser);
   privateRouter.delete("/user/delete/:id", handleDelete);
 
-  //Group
-  privateRouter.get("/group/read", getAllGroup);
+  //GroupD
+  privateRouter.get("/group", getAllGroup);
 
   router.use(privateRouter);
 

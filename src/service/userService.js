@@ -1,9 +1,10 @@
 import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
-import { Op, where } from "sequelize";
-
+import { Op, where, findOrCreate } from "sequelize";
 import { checkIsArtist } from "./artistService";
+import { songCount } from "./songService";
+import { albumCount } from "./albumService";
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -174,31 +175,19 @@ const getUserById = async (id) => {
 const updateUser = async (id, rawData) => {
   try {
     let emailExist = await checkEmail(rawData.email, id);
-    let phoneExist = await checkPhone(rawData.phone, id);
 
     if (emailExist) {
       return {
         EM: "Email is exist",
         EC: -1,
-        DT: rawData,
+        DT: rawData.email,
       };
     }
 
-    if (phoneExist) {
-      return {
-        EM: "Phone is exist",
-        EC: -1,
-        DT: rawData,
-      };
-    }
-
-    let userApterUpdate = await db.User.update(
+    let userAfterUpdate = await db.User.update(
       {
         email: rawData.email,
         displayName: rawData.displayName,
-        phone: rawData.phone,
-        address: rawData.address,
-        sex: rawData.sex,
         groupId: rawData.groupId,
       },
       {
@@ -208,10 +197,37 @@ const updateUser = async (id, rawData) => {
       },
     );
 
+    let artistProfile = null;
+
+    if (rawData.isArtist) {
+      const [profile, created] = await db.ArtistProfile.findOrCreate({
+        where: {
+          userId: id,
+        },
+        defaults: {
+          userId: id,
+          verified: rawData.statusVerify,
+          monthlyListeners: 0,
+        },
+      });
+      artistProfile = profile;
+      if (!created) {
+        await artistProfile.update({
+          verified: rawData.statusVerify,
+        });
+      }
+    } else {
+      await db.ArtistProfile.destroy({
+        where: {
+          userId: id,
+        },
+      });
+    }
+
     return {
       EM: "Update successfully",
       EC: 0,
-      DT: userApterUpdate,
+      DT: { information: userAfterUpdate, artist: artistProfile },
     };
   } catch (error) {
     return {
@@ -224,11 +240,33 @@ const updateUser = async (id, rawData) => {
 
 const deleteUser = async (id) => {
   try {
+    let isArtist = await checkIsArtist(id);
+
+    if (isArtist) {
+      let songs = await songCount(id);
+      let albums = await albumCount(id);
+
+      if (songs > 0 || albums > 0) {
+        return {
+          EM: "Artist still has some songs and albums.",
+          EC: -1,
+          DT: { songCount: songs, albumCount: albums },
+        };
+      } else {
+        await db.ArtistProfile.destroy({
+          where: {
+            userId: id,
+          },
+        });
+      }
+    }
+
     await db.User.destroy({
       where: {
         id: id,
       },
     });
+
     return {
       EM: "Delete successfully",
       EC: 0,

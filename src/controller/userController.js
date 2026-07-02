@@ -70,19 +70,20 @@ const getUserWithId = async (req, res) => {
 
 const handleUpdateUser = async (req, res) => {
   const userId = req.params.id;
+  console.log("Toàn bộ Body nhận được:", req.body);
+  console.log("Params ID:", req.params.id);
 
   if (
-    !req.body.email ||
-    !req.body.displayName ||
-    !req.body.address ||
-    !req.body.sex ||
-    !req.body.phone ||
-    !req.body.groupId
+    !req.body?.email ||
+    !req.body?.displayName ||
+    !req.body?.groupId ||
+    req.body?.isArtist === null ||
+    req.body?.statusVerify === null
   ) {
     return res.status(200).json({
       EM: "Missing required parameters", //error message
       EC: -1, //error code
-      DT: "", //data
+      DT: req.body, //data
     });
   }
   let data = await updateUser(userId, req.body);

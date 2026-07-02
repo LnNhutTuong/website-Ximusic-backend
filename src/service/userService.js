@@ -73,37 +73,11 @@ const checkEmail = async (userEmail, userId = null) => {
   return false;
 };
 
-const checkPhone = async (userPhone, userId = null) => {
-  //điều kiện là cái mail
-  let whereCondition = {
-    phone: userPhone,
-  };
-
-  //nếu có userId thì chạy vào đây
-  if (userId) {
-    whereCondition.id = {
-      // lấy id của cái mail đang tìm
-      [Op.ne]: userId, //loại trừ cái id này ra
-    };
-  }
-
-  let user = await db.User.findOne({
-    where: whereCondition,
-  });
-
-  if (user) {
-    return true;
-  }
-
-  return false;
-};
-
 const createNewUser = async (rawData) => {
   try {
     let userHashPassword = hashPassword(rawData.password);
 
     let emailExist = await checkEmail(rawData.email);
-    let phoneExist = await checkPhone(rawData.phone);
 
     if (emailExist) {
       return {
@@ -113,28 +87,26 @@ const createNewUser = async (rawData) => {
       };
     }
 
-    if (phoneExist) {
-      return {
-        EM: "Phone is exist",
-        EC: -1,
-        DT: rawData,
-      };
-    }
-
     let newUser = await db.User.create({
       email: rawData.email,
       password: userHashPassword,
       displayName: rawData.displayName,
-      phone: rawData.phone,
-      address: rawData.address,
-      sex: rawData.sex,
       groupId: rawData.groupId,
     });
+
+    let artist = null;
+    if (rawData.groupId === 2) {
+      artist = await db.ArtistProfile.create({
+        userId: newUser.id,
+        verified: rawData.statusVerify,
+        monthlyListeners: 0,
+      });
+    }
 
     return {
       EM: "Create new user successfully",
       EC: 0,
-      DT: rawData,
+      DT: { information: newUser, artist: artist },
     };
   } catch (error) {
     return {
@@ -199,7 +171,7 @@ const updateUser = async (id, rawData) => {
 
     let artistProfile = null;
 
-    if (rawData.isArtist) {
+    if (rawData.groupId === 2) {
       const [profile, created] = await db.ArtistProfile.findOrCreate({
         where: {
           userId: id,

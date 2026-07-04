@@ -8,8 +8,8 @@ import {
   handleDelete,
   getUserAccount,
 } from "../controller/userController";
-
 import { getAllGroup } from "../controller/groupController";
+import { getAllArtist } from "../controller/artistController";
 import { checkJWT, checkPermission } from "../middleware/JWTAction";
 const router = express.Router(); // router cha
 
@@ -44,6 +44,8 @@ const initApiRoutes = (app) => {
   privateRouter.get("/user/:id", getUserWithId);
   privateRouter.put("/user/update/:id", handleUpdateUser);
   privateRouter.delete("/user/delete/:id", handleDelete);
+
+  //Artist
 
   //GroupD
   privateRouter.get("/group", getAllGroup);

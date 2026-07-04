@@ -19,13 +19,16 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      stageName: {
+        type: Sequelize.VARCHAR,
+      },
 
       bio: {
         type: Sequelize.TEXT,
       },
 
       verified: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.INTEGER,
         defaultValue: false,
       },
 

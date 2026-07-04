@@ -2,9 +2,10 @@ import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 import db from "../models/index";
 import { Op, where, findOrCreate } from "sequelize";
-import { checkIsArtist } from "./artistService";
+import { handleGetArtistWithId } from "./artistService";
 import { songCount } from "./songService";
 import { albumCount } from "./albumService";
+
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
@@ -119,7 +120,7 @@ const createNewUser = async (rawData) => {
 
 const getUserById = async (id) => {
   let user;
-  let artist;
+  let artistProfile;
   try {
     user = await db.User.findOne({
       where: {
@@ -128,16 +129,18 @@ const getUserById = async (id) => {
       attributes: { exclude: ["password"] },
     });
 
-    artist = await checkIsArtist(user.id);
+    if (user.groupId === 2) {
+      artistProfile = await handleGetArtistWithId(user.id);
+    }
 
     return {
       EM: "Get user by Id successfully",
       EC: 0,
-      DT: { information: user, artist },
+      DT: { information: user, artist: artistProfile },
     };
   } catch (error) {
     return {
-      EM: "Something went wrong..." + error,
+      EM: "Something went wrong in service..." + error,
       EC: -2,
       DT: "",
     };
@@ -212,7 +215,7 @@ const updateUser = async (id, rawData) => {
 
 const deleteUser = async (id) => {
   try {
-    let isArtist = await checkIsArtist(id);
+    let isArtist = await handleGetArtistWithId(id);
 
     if (isArtist) {
       let songs = await songCount(id);

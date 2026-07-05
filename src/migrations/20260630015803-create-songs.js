@@ -37,8 +37,13 @@ module.exports = {
         type: Sequelize.TEXT,
       },
 
-      genre: {
+      genreId: {
         type: Sequelize.STRING(100),
+        allowNull: false,
+        references: {
+          model: "Genres",
+          key: "id",
+        },
       },
 
       artistId: {

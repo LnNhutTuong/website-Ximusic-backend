@@ -35,6 +35,13 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: "userId",
         as: "likedByUsers",
       });
+
+      this.belongsToMany(models.Genre, {
+        through: models.SongGenre,
+        foreignKey: "songId",
+        otherKey: "genreId",
+        as: "genres",
+      });
     }
   }
   Song.init(
@@ -45,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       duration: DataTypes.INTEGER,
       plays: DataTypes.BIGINT,
       lyrics: DataTypes.TEXT,
-      genre: DataTypes.STRING,
+      genreId: DataTypes.STRING,
       artistId: DataTypes.INTEGER,
       albumId: DataTypes.INTEGER,
     },

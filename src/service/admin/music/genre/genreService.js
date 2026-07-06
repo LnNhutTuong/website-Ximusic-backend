@@ -26,6 +26,8 @@ const fetchAllGenre = async (page, limit) => {
 
 const createNewGenre = async (rawData) => {
   try {
+    console.log(">>>check raw data: ", rawData);
+
     let newGenre = await db.Genre.create({
       name: rawData.name,
       description: rawData.description,

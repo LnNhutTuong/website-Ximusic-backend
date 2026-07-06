@@ -1,9 +1,11 @@
 import express from "express";
+
 import {
   handleRegister,
   handleLogin,
 } from "../controller/admin/auth/authController";
 import { checkJWT, checkPermission } from "../middleware/JWTAction";
+import createUploadMiddleware from "../middleware/uploadMiddleware";
 import { getAllGroup } from "../controller/admin/group/groupController";
 import {
   getAllUser,
@@ -18,6 +20,7 @@ import {
   handleGetAllGenre,
   handleCreateNewGenre,
 } from "../controller/admin/music/genre/genreController";
+
 const router = express.Router(); // router cha
 
 /**
@@ -58,8 +61,13 @@ const initApiRoutes = (app) => {
   privateRouter.get("/group", getAllGroup);
 
   //Genre
+  const uploadGenre = createUploadMiddleware("genre");
   privateRouter.get("/genre", handleGetAllGenre);
-  privateRouter.post("/genre/create", handleCreateNewGenre);
+  privateRouter.post(
+    "/genre/create",
+    uploadGenre.single("icon"),
+    handleCreateNewGenre,
+  );
 
   router.use(privateRouter);
 

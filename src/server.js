@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import initApiRoutes from "./routes/api";
 import configViewEngine from "./configs/viewEngine";
 require("dotenv").config();
@@ -21,6 +22,9 @@ app.use(cookieParser());
 
 //config cors
 configCors(app);
+
+// serve uploaded files
+app.use("/uploads", express.static("uploads"));
 
 //test connection
 const connectionDB = async () => {

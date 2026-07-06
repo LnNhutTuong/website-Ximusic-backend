@@ -47,17 +47,19 @@ const handleGetAllGenre = async (req, res) => {
 
 const handleCreateNewGenre = async (req, res) => {
   try {
-    console.log(">>>check req body: ", req.body);
-    if (!req.body?.name || !req.body?.description) {
-      return await res.status(200).json({
+    const { name, description } = req.body;
+    const iconFile = req.file;
+    const iconPath = iconFile ? `uploads/genre/${iconFile.filename}` : null;
+
+    if (!name || !description) {
+      return await res.status(400).json({
         EM: "Missing required data", //error message
         EC: -1, //error code
         DT: req.body, //data
       });
     }
 
-    let data = await createNewGenre(req.body);
-
+    let data = await createNewGenre({ name, description, icon: iconPath });
     return await res.status(200).json({
       EM: data.EM, //error message
       EC: data.EC, //error code

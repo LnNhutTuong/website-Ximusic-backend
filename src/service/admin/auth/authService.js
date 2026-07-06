@@ -1,9 +1,9 @@
 import bcrypt, { hash, hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
-import db from "../models/index";
+import db from "../../../models/index";
 import { Op } from "sequelize";
-import { getGroupWithRoles } from "./JWTService";
-import { createJwt } from "../middleware/JWTAction";
+import { getGroupWithRoles } from "../jwt/JWTService";
+import { createJwt } from "../../../middleware/JWTAction";
 require("dotenv").config();
 
 const hashPassword = (password) => {

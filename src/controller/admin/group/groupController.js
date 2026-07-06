@@ -1,4 +1,4 @@
-import { handleGetAllGroup } from "../service/groupService";
+import { handleGetAllGroup } from "../../../service/admin/group/groupService";
 
 const getAllGroup = async (req, res) => {
   try {

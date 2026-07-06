@@ -1,4 +1,7 @@
-import { checkIsArtist, handleGetAllArtist } from "../service/artistService";
+import {
+  checkIsArtist,
+  handleGetAllArtist,
+} from "../../../service/admin/artist/artistService";
 
 const checkArtist = async (req, res) => {
   try {

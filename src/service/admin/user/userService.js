@@ -1,10 +1,10 @@
 import bcrypt, { hashSync } from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
-import db from "../models/index";
+import db from "../../../models/index";
 import { Op, where, findOrCreate } from "sequelize";
-import { handleGetArtistWithId } from "./artistService";
-import { songCount } from "./songService";
-import { albumCount } from "./albumService";
+import { handleGetArtistWithId } from "../artist/artistService";
+import { songCount } from "../music/song/songService";
+import { albumCount } from "../music/album/albumService";
 
 const hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);

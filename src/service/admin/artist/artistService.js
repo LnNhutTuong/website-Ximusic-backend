@@ -1,4 +1,4 @@
-import db from "../models/index";
+import db from "../../../models/index";
 import { Op, where } from "sequelize";
 
 const handleGetArtistWithId = async (userId) => {

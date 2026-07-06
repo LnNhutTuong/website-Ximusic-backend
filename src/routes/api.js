@@ -1,5 +1,10 @@
 import express from "express";
-import { hanldeRegister, handleLogin } from "../controller/authController";
+import {
+  handleRegister,
+  handleLogin,
+} from "../controller/admin/auth/authController";
+import { checkJWT, checkPermission } from "../middleware/JWTAction";
+import { getAllGroup } from "../controller/admin/group/groupController";
 import {
   getAllUser,
   handleCreateNewUser,
@@ -7,10 +12,9 @@ import {
   handleUpdateUser,
   handleDelete,
   getUserAccount,
-} from "../controller/userController";
-import { getAllGroup } from "../controller/groupController";
-import { getAllArtist } from "../controller/artistController";
-import { checkJWT, checkPermission } from "../middleware/JWTAction";
+} from "../controller/admin/user/userController";
+
+import { getAllGenre } from "../controller/admin/music/genre/genreController";
 const router = express.Router(); // router cha
 
 /**
@@ -25,7 +29,7 @@ const initApiRoutes = (app) => {
   //Account
   publicRouter.get("/account", checkJWT, getUserAccount);
   //Register
-  publicRouter.post("/register", hanldeRegister);
+  publicRouter.post("/register", handleRegister);
   //Login
   publicRouter.post("/login", handleLogin);
 
@@ -47,8 +51,11 @@ const initApiRoutes = (app) => {
 
   //Artist
 
-  //GroupD
+  //Group
   privateRouter.get("/group", getAllGroup);
+
+  //Genre
+  privateRouter.get("/genre", getAllGenre);
 
   router.use(privateRouter);
 

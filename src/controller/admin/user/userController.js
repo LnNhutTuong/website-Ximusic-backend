@@ -4,7 +4,7 @@ import {
   getUserById,
   updateUser,
   deleteUser,
-} from "../service/userService";
+} from "../../../service/admin/user/userService";
 
 const getAllUser = async (req, res) => {
   try {

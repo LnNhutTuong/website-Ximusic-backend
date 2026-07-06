@@ -1,6 +1,6 @@
-import authService from "../service/authService";
+import authService from "../../../service/admin/auth/authService";
 
-const hanldeRegister = async (req, res) => {
+const handleRegister = async (req, res) => {
   try {
     if (!req.body.email || !req.body.displayName || !req.body.password) {
       return res.status(200).json({
@@ -18,7 +18,7 @@ const hanldeRegister = async (req, res) => {
       });
     }
 
-    let dataUser = await authService.hanldeRegister(req.body);
+    let dataUser = await authService.handleRegister(req.body);
 
     return res.status(200).json({
       EM: dataUser.EM, //error message
@@ -80,4 +80,4 @@ const handleLogin = async (req, res) => {
   }
 };
 
-export { hanldeRegister, handleLogin };
+export { handleRegister, handleLogin };

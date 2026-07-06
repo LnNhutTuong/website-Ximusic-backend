@@ -49,7 +49,6 @@ const getAllUser = async (req, res) => {
 };
 
 const handleCreateNewUser = async (req, res) => {
-  console.log(">>check req: ", req.body);
   if (!req.body?.email || !req.body?.displayName || !req.body?.groupId) {
     return res.status(200).json({
       EM: "Missing required parameters", //error message

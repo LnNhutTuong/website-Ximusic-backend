@@ -1,6 +1,7 @@
 import {
   fetchAllGenre,
   createNewGenre,
+  getGenreWithId,
 } from "../../../../service/admin/music/genre/genreService";
 
 const handleGetAllGenre = async (req, res) => {
@@ -74,4 +75,32 @@ const handleCreateNewGenre = async (req, res) => {
   }
 };
 
-export { handleGetAllGenre, handleCreateNewGenre };
+const handleGetGenreWithId = async (req, res) => {
+  try {
+    const genreId = req.params.id;
+
+    if (!genreId) {
+      return await res.status(400).json({
+        EM: "Missing required data", //error message
+        EC: -1, //error code
+        DT: req.body, //data
+      });
+    }
+
+    let data = await getGenreWithId(genreId);
+
+    return await res.status(200).json({
+      EM: data.EM, //error message
+      EC: data.EC, //error code
+      DT: data.DT, //data
+    });
+  } catch (error) {
+    return await res.status(500).json({
+      EM: "Something went wrong in controller..." + error, //error message
+      EC: -1, //error code
+      DT: "", //data
+    });
+  }
+};
+
+export { handleGetAllGenre, handleCreateNewGenre, handleGetGenreWithId };

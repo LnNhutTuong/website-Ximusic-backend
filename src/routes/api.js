@@ -19,6 +19,7 @@ import {
 import {
   handleGetAllGenre,
   handleCreateNewGenre,
+  handleGetGenreWithId,
 } from "../controller/admin/music/genre/genreController";
 
 const router = express.Router(); // router cha
@@ -68,6 +69,7 @@ const initApiRoutes = (app) => {
     uploadGenre.single("icon"),
     handleCreateNewGenre,
   );
+  privateRouter.get("/genre/:id", handleGetGenreWithId);
 
   router.use(privateRouter);
 

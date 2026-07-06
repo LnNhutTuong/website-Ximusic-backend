@@ -4,7 +4,7 @@ import fs from "fs";
 
 const createUploadMiddleware = (folderPath) => {
   const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: (req, file, cb) => {
       // folderPath truyền vào có thể là 'genre' hoặc 'song/thumb'
       const dir = `uploads/${folderPath}/`;
 
@@ -15,7 +15,7 @@ const createUploadMiddleware = (folderPath) => {
       }
       cb(null, dir);
     },
-    filename: function (req, file, cb) {
+    filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       // Lấy tên file gốc hoặc đặt tên theo fieldname
       cb(

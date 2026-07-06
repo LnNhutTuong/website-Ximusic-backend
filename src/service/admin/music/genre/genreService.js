@@ -26,8 +26,6 @@ const fetchAllGenre = async (page, limit) => {
 
 const createNewGenre = async (rawData) => {
   try {
-    console.log(">>>check raw data: ", rawData);
-
     let newGenre = await db.Genre.create({
       name: rawData.name,
       description: rawData.description,
@@ -48,4 +46,24 @@ const createNewGenre = async (rawData) => {
   }
 };
 
-export { fetchAllGenre, createNewGenre };
+const getGenreWithId = async (id) => {
+  try {
+    let genreWithID = await db.Genre.findOne({
+      where: { id },
+    });
+
+    return {
+      EM: "Get Genre with Id Successfully", //error message
+      EC: 0, //error code
+      DT: genreWithID, //data
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error, //error message
+      EC: -2, //error code
+      DT: "", //data
+    };
+  }
+};
+
+export { fetchAllGenre, createNewGenre, getGenreWithId };

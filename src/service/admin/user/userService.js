@@ -96,7 +96,7 @@ const createNewUser = async (rawData) => {
     });
 
     let artist = null;
-    if (rawData.groupId === 2) {
+    if (+rawData.groupId === 2) {
       artist = await db.ArtistProfile.create({
         userId: newUser.id,
         verified: rawData.statusVerify,

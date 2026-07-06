@@ -49,18 +49,23 @@ const getAllUser = async (req, res) => {
 };
 
 const handleCreateNewUser = async (req, res) => {
-  if (
-    !req.body?.email ||
-    !req.body?.displayName ||
-    !req.body?.groupId ||
-    req.body?.statusVerify === null
-  ) {
+  console.log(">>check req: ", req.body);
+  if (!req.body?.email || !req.body?.displayName || !req.body?.groupId) {
     return res.status(200).json({
       EM: "Missing required parameters", //error message
       EC: -1, //error code
       DT: req.body, //data
     });
   }
+
+  if (req.body.groupId === "2" && !req.body.statusVerify) {
+    return res.status(200).json({
+      EM: "Missing status Verify", //error message
+      EC: -1, //error code
+      DT: req.body, //data
+    });
+  }
+
   let data = await createNewUser(req.body);
   return await res.status(200).json({
     EM: data.EM, //error message

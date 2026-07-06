@@ -24,4 +24,26 @@ const fetchAllGenre = async (page, limit) => {
   }
 };
 
-export { fetchAllGenre };
+const createNewGenre = async (rawData) => {
+  try {
+    let newGenre = await db.Genre.create({
+      name: rawData.name,
+      description: rawData.description,
+      icon: rawData.icon,
+    });
+
+    return {
+      EM: "Create new Genre Successfully", //error message
+      EC: 0, //error code
+      DT: rawData, //data
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error, //error message
+      EC: -2, //error code
+      DT: "", //data
+    };
+  }
+};
+
+export { fetchAllGenre, createNewGenre };

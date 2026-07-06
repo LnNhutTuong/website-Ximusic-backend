@@ -14,7 +14,10 @@ import {
   getUserAccount,
 } from "../controller/admin/user/userController";
 
-import { getAllGenre } from "../controller/admin/music/genre/genreController";
+import {
+  handleGetAllGenre,
+  handleCreateNewGenre,
+} from "../controller/admin/music/genre/genreController";
 const router = express.Router(); // router cha
 
 /**
@@ -55,7 +58,8 @@ const initApiRoutes = (app) => {
   privateRouter.get("/group", getAllGroup);
 
   //Genre
-  privateRouter.get("/genre", getAllGenre);
+  privateRouter.get("/genre", handleGetAllGenre);
+  privateRouter.post("/genre/create", handleCreateNewGenre);
 
   router.use(privateRouter);
 

@@ -6,8 +6,8 @@ import { handleGetArtistWithId } from "../artist/artistService";
 import { songCount } from "../music/song/songService";
 import { albumCount } from "../music/album/albumService";
 
-const hashPassword = (password) => {
-  return bcrypt.hashSync(password, salt);
+const hashPassword = async (password) => {
+  return await bcrypt.hashSync(password, salt);
 };
 
 const fetchAllUser = async (page, limit) => {
@@ -76,7 +76,7 @@ const checkEmail = async (userEmail, userId = null) => {
 
 const createNewUser = async (rawData) => {
   try {
-    let userHashPassword = hashPassword(rawData.password);
+    let userHashPassword = await hashPassword(rawData.password);
 
     let emailExist = await checkEmail(rawData.email);
 
@@ -107,7 +107,7 @@ const createNewUser = async (rawData) => {
     return {
       EM: "Create new user successfully",
       EC: 0,
-      DT: { information: newUser, artist: artist },
+      DT: { information: newUser, artist },
     };
   } catch (error) {
     return {

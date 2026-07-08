@@ -20,6 +20,8 @@ import {
   handleGetAllGenre,
   handleCreateNewGenre,
   handleGetGenreWithId,
+  handleUpdateGenre,
+  handleDeleteGenre,
 } from "../controller/admin/music/genre/genreController";
 
 const router = express.Router(); // router cha
@@ -70,7 +72,12 @@ const initApiRoutes = (app) => {
     handleCreateNewGenre,
   );
   privateRouter.get("/genre/:id", handleGetGenreWithId);
-
+  privateRouter.put(
+    "/genre/update/:id",
+    uploadGenre.single("icon"),
+    handleUpdateGenre,
+  );
+  privateRouter.delete("/genre/delete/:id", handleDeleteGenre);
   router.use(privateRouter);
 
   return app.use("/api/v1", router);

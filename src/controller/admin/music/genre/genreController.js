@@ -2,6 +2,8 @@ import {
   fetchAllGenre,
   createNewGenre,
   getGenreWithId,
+  updateGenre,
+  deleteGenre,
 } from "../../../../service/admin/music/genre/genreService";
 
 const handleGetAllGenre = async (req, res) => {
@@ -103,4 +105,60 @@ const handleGetGenreWithId = async (req, res) => {
   }
 };
 
-export { handleGetAllGenre, handleCreateNewGenre, handleGetGenreWithId };
+const handleUpdateGenre = async (req, res) => {
+  try {
+    const genreId = req.params.id;
+
+    const { name, description } = req.body;
+    const iconFile = req.file;
+    let iconPath;
+    if (iconFile) {
+      iconPath = iconFile ? `uploads/genre/${iconFile.filename}` : null;
+    }
+
+    if (!name || !description) {
+      return await res.status(400).json({
+        EM: "Missing required data", //error message
+        EC: -1, //error code
+        DT: req.body, //data
+      });
+    }
+
+    let data = await updateGenre(genreId, {
+      name,
+      description,
+      icon: iconPath || iconFile,
+    });
+    return await res.status(200).json({
+      EM: data.EM, //error message
+      EC: data.EC, //error code
+      DT: data.DT, //data
+    });
+  } catch (error) {
+    return await res.status(500).json({
+      EM: "Something went wrong in controller..." + error, //error message
+      EC: -1, //error code
+      DT: "", //data
+    });
+  }
+};
+
+const handleDeleteGenre = async (req, res) => {
+  const genreId = req.params.id;
+
+  let data = await deleteGenre(genreId);
+
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+
+export {
+  handleGetAllGenre,
+  handleCreateNewGenre,
+  handleGetGenreWithId,
+  handleUpdateGenre,
+  handleDeleteGenre,
+};

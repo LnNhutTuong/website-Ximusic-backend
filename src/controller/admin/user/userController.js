@@ -87,14 +87,17 @@ const getUserWithId = async (req, res) => {
 const handleUpdateUser = async (req, res) => {
   const userId = req.params.id;
 
-  if (
-    !req.body?.email ||
-    !req.body?.displayName ||
-    !req.body?.groupId ||
-    req.body?.statusVerify === null
-  ) {
+  if (!req.body?.email || !req.body?.displayName || !req.body?.groupId) {
     return res.status(200).json({
       EM: "Missing required parameters", //error message
+      EC: -1, //error code
+      DT: req.body, //data
+    });
+  }
+
+  if (req.body.groupId === "2" && !req.body.statusVerify) {
+    return res.status(200).json({
+      EM: "Missing status Verify", //error message
       EC: -1, //error code
       DT: req.body, //data
     });

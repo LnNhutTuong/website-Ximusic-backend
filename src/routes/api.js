@@ -4,9 +4,13 @@ import {
   handleRegister,
   handleLogin,
 } from "../controller/admin/auth/authController";
+
 import { checkJWT, checkPermission } from "../middleware/JWTAction";
+
 import createUploadMiddleware from "../middleware/uploadMiddleware";
+
 import { getAllGroup } from "../controller/admin/group/groupController";
+
 import {
   getAllUser,
   handleCreateNewUser,
@@ -16,6 +20,8 @@ import {
   getUserAccount,
 } from "../controller/admin/user/userController";
 
+import { handleGetAllArtist } from "../controller/admin/artist/artistController";
+
 import {
   handleGetAllGenre,
   handleCreateNewGenre,
@@ -23,6 +29,11 @@ import {
   handleUpdateGenre,
   handleDeleteGenre,
 } from "../controller/admin/music/genre/genreController";
+
+import {
+  handleGetAllSongs,
+  handleCreateNewSong,
+} from "../controller/admin/music/song/songController";
 
 const router = express.Router(); // router cha
 
@@ -59,6 +70,7 @@ const initApiRoutes = (app) => {
   privateRouter.delete("/user/delete/:id", handleDelete);
 
   //Artist
+  privateRouter.get("/artist", handleGetAllArtist);
 
   //Group
   privateRouter.get("/group", getAllGroup);
@@ -80,6 +92,17 @@ const initApiRoutes = (app) => {
   privateRouter.delete("/genre/delete/:id", handleDeleteGenre);
   router.use(privateRouter);
 
+  //Song
+  const uploadSong = createUploadMiddleware("song");
+  privateRouter.get("/song", handleGetAllSongs);
+  privateRouter.post(
+    "/song/create",
+    uploadSong.fields([
+      { name: "cover", maxCount: 1 },
+      { name: "audioUrl", maxCount: 1 },
+    ]),
+    handleCreateNewSong,
+  );
   return app.use("/api/v1", router);
 };
 

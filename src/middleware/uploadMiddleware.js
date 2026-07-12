@@ -6,7 +6,7 @@ const createUploadMiddleware = (folderPath) => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       // folderPath truyền vào có thể là 'genre' hoặc 'song/thumb'
-      const dir = `uploads/${folderPath}/`;
+      const dir = path.join("uploads", folderPath, file.fieldname);
 
       // fs.mkdirSync với { recursive: true } sẽ tự động tạo toàn bộ các thư mục con
       // Ví dụ: tự tạo 'uploads', sau đó tạo 'song', rồi tạo 'thumb' nếu chúng chưa tồn tại

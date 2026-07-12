@@ -1,6 +1,6 @@
 import {
   checkIsArtist,
-  handleGetAllArtist,
+  getAllArtists,
 } from "../../../service/admin/artist/artistService";
 
 const checkArtist = async (req, res) => {
@@ -28,8 +28,8 @@ const checkArtist = async (req, res) => {
   }
 };
 
-const getAllArtist = async (req, res) => {
-  let data = await handleGetAllArtist();
+const handleGetAllArtist = async (req, res) => {
+  let data = await getAllArtists();
   return await res.status(200).json({
     EM: data.EM, //error message
     EC: data.EC, //error code
@@ -37,4 +37,4 @@ const getAllArtist = async (req, res) => {
   });
 };
 
-export { checkArtist, getAllArtist };
+export { checkArtist, handleGetAllArtist };

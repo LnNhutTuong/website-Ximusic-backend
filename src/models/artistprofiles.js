@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   ArtistProfile.init(
     {
       userId: DataTypes.INTEGER,
-      stageName: DataTypes.INTEGER,
+      stageName: DataTypes.STRING,
       bio: DataTypes.TEXT,
       verified: DataTypes.INTEGER,
       monthlyListeners: DataTypes.INTEGER,

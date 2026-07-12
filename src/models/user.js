@@ -14,15 +14,23 @@ module.exports = (sequelize, DataTypes) => {
         as: "artistProfile",
       });
 
-      // Songs  artist
+      // Songs owner
       this.hasMany(models.Song, {
+        foreignKey: "ownerId",
+        as: "ownedSongs",
+      });
+
+      //nhung bai nhac ma thang nay tham gia
+      this.belongsToMany(models.Song, {
+        through: models.SongArtist,
         foreignKey: "artistId",
+        otherKey: "songId",
         as: "songs",
       });
 
       // Albums  artist
       this.hasMany(models.Album, {
-        foreignKey: "artistId",
+        foreignKey: "ownerId",
         as: "albums",
       });
 

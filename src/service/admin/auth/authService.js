@@ -24,7 +24,7 @@ const checkEmail = async (userEmail) => {
   return false;
 };
 
-const hanldeRegister = async (rawUserData) => {
+const handleRegister = async (rawUserData) => {
   try {
     let emailExist = await checkEmail(rawUserData.email);
 
@@ -137,6 +137,6 @@ const handleLogin = async (rawUserData) => {
 };
 
 module.exports = {
-  hanldeRegister,
+  handleRegister,
   handleLogin,
 };

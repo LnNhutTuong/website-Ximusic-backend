@@ -1,5 +1,6 @@
 import { where } from "sequelize";
 import db from "../../../../models/index";
+import { deleteFile } from "../../../../utils/fileHelper";
 
 const fetchAllGenre = async (page, limit) => {
   let genres = [];
@@ -68,40 +69,36 @@ const getGenreWithId = async (id) => {
 };
 
 const updateGenre = async (id, rawData) => {
-  try {
-    const [updatedRows] = await db.Genre.update(
-      {
-        name: rawData.name,
-        description: rawData.description,
-        icon: rawData.icon,
-      },
-      { where: { id } },
-    );
+  const genre = await db.Genre.findOne({
+    where: {
+      id,
+    },
+  });
 
-    if (updatedRows === 0) {
-      return {
-        EM: "Genre not found or no changes made",
-        EC: -1,
-        DT: null,
-      };
-    }
-
-    const updatedGenre = await db.Genre.findByPk(id);
-
+  if (!genre) {
     return {
-      EM: "Update Genre Successfully",
-      EC: 0,
-      DT: updatedGenre,
-    };
-  } catch (error) {
-    return {
-      EM: "Something went wrong in service..." + error,
-      EC: -2,
-      DT: "",
+      EC: -1,
+      EM: "Genre not found",
     };
   }
-};
 
+  if (rawData.hasNewIcon && genre.icon) {
+    deleteFile(genre.icon);
+  }
+
+  const nextIcon = rawData.hasNewIcon ? rawData.icon : genre.icon;
+
+  await genre.update({
+    name: rawData.name,
+    description: rawData.description,
+    icon: nextIcon,
+  });
+
+  return {
+    EC: 0,
+    EM: "Update genre successfully",
+  };
+};
 const hasSongInGenre = async (genreId) => {
   const songUsed = await db.Song.findOne({
     where: { genreId },

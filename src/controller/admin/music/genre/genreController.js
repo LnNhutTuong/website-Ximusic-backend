@@ -52,7 +52,9 @@ const handleCreateNewGenre = async (req, res) => {
   try {
     const { name, description } = req.body;
     const iconFile = req.file;
-    const iconPath = iconFile ? `uploads/genre/${iconFile.filename}` : null;
+    const iconPath = iconFile
+      ? `uploads/genre/icon/${iconFile.filename}`
+      : null;
 
     if (!name || !description) {
       return await res.status(400).json({
@@ -111,9 +113,10 @@ const handleUpdateGenre = async (req, res) => {
 
     const { name, description } = req.body;
     const iconFile = req.file;
-    let iconPath;
+    let iconPath = null;
+
     if (iconFile) {
-      iconPath = iconFile ? `uploads/genre/${iconFile.filename}` : null;
+      iconPath = `uploads/genre/icon/${iconFile.filename}`;
     }
 
     if (!name || !description) {
@@ -127,8 +130,10 @@ const handleUpdateGenre = async (req, res) => {
     let data = await updateGenre(genreId, {
       name,
       description,
-      icon: iconPath || iconFile,
+      icon: iconPath,
+      hasNewIcon: !!iconFile,
     });
+
     return await res.status(200).json({
       EM: data.EM, //error message
       EC: data.EC, //error code

@@ -8,10 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // Artist
+      // Owner
       this.belongsTo(models.User, {
-        foreignKey: "artistId",
-        as: "artist",
+        foreignKey: "ownerId",
+        as: "owner",
+      });
+
+      //nhung thang tham gia bai hat nay
+      this.belongsToMany(models.User, {
+        through: models.SongArtist,
+        foreignKey: "songId",
+        otherKey: "ownerId",
+        as: "artists",
       });
 
       // Album
@@ -52,8 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       duration: DataTypes.INTEGER,
       plays: DataTypes.BIGINT,
       lyrics: DataTypes.TEXT,
-      genreId: DataTypes.STRING,
-      artistId: DataTypes.INTEGER,
+      ownerId: DataTypes.INTEGER,
       albumId: DataTypes.INTEGER,
     },
     {

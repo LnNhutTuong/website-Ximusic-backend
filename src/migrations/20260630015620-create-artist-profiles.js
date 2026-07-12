@@ -20,7 +20,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       stageName: {
-        type: Sequelize.VARCHAR,
+        type: Sequelize.STRING(255),
       },
 
       bio: {
@@ -38,7 +38,7 @@ module.exports = {
       },
 
       country: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(255),
       },
       createdAt: {
         allowNull: false,

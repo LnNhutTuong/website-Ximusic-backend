@@ -2,35 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Albums", {
+    await queryInterface.createTable("SongArtists", {
       id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-
-      title: {
-        type: Sequelize.STRING(255),
         allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
       },
-
-      cover: {
-        type: Sequelize.STRING(500),
+      songId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Songs",
+          key: "id",
+        },
       },
-
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: "Users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-
-      releaseDate: {
-        type: Sequelize.DATEONLY,
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +34,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Albums");
+    await queryInterface.dropTable("SongArtists");
   },
 };

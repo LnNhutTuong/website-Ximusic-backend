@@ -20,10 +20,13 @@ import {
   getUserAccount,
 } from "../controller/admin/user/userController";
 
-import { handleGetAllArtist } from "../controller/admin/artist/artistController";
+import { handleGetAllArtistOption } from "../controller/admin/artist/artistController";
+
+import { handleAlbumOptionWithIdOrNot } from "../controller/admin/music/album/albumController";
 
 import {
   handleGetAllGenre,
+  handleGetGenreOption,
   handleCreateNewGenre,
   handleGetGenreWithId,
   handleUpdateGenre,
@@ -70,7 +73,10 @@ const initApiRoutes = (app) => {
   privateRouter.delete("/user/delete/:id", handleDelete);
 
   //Artist
-  privateRouter.get("/artist", handleGetAllArtist);
+  privateRouter.get("/artist/option", handleGetAllArtistOption);
+
+  //Album
+  privateRouter.get("/album/option", handleAlbumOptionWithIdOrNot);
 
   //Group
   privateRouter.get("/group", getAllGroup);
@@ -78,6 +84,7 @@ const initApiRoutes = (app) => {
   //Genre
   const uploadGenre = createUploadMiddleware("genre");
   privateRouter.get("/genre", handleGetAllGenre);
+  privateRouter.get("/genre/option", handleGetGenreOption);
   privateRouter.post(
     "/genre/create",
     uploadGenre.single("icon"),
@@ -103,6 +110,7 @@ const initApiRoutes = (app) => {
     ]),
     handleCreateNewSong,
   );
+
   return app.use("/api/v1", router);
 };
 

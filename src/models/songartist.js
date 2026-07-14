@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       this.belongsTo(models.User, {
-        foreignKey: "artistId",
-        as: "artist",
+        foreignKey: "featureId",
+        as: "feature",
       });
     }
   }
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
-      artistId: {
+      featureId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

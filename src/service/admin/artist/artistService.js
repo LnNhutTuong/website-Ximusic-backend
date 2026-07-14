@@ -19,9 +19,9 @@ const handleGetArtistWithId = async (userId) => {
   }
 };
 
-const getAllArtists = async () => {
+const getAllArtistOption = async () => {
   try {
-    const artists = await db.User.findAll({
+    const artists = await db.User.findAndCountAll({
       where: {
         groupId: 2,
       },
@@ -31,7 +31,10 @@ const getAllArtists = async () => {
         {
           model: db.ArtistProfile,
           as: "artistProfile",
-          attributes: ["verified", "stageName"], // hoặc các cột bạn cần
+          where: {
+            verified: 1,
+          },
+          attributes: ["stageName"],
         },
       ],
     });
@@ -50,4 +53,4 @@ const getAllArtists = async () => {
   }
 };
 
-export { handleGetArtistWithId, getAllArtists };
+export { handleGetArtistWithId, getAllArtistOption };

@@ -1,5 +1,6 @@
 import {
   fetchAllGenre,
+  getGenreOption,
   createNewGenre,
   getGenreWithId,
   updateGenre,
@@ -34,6 +35,23 @@ const handleGetAllGenre = async (req, res) => {
 
     let data = await fetchAllGenre(+req.query.page, +req.query.limit);
 
+    return await res.status(200).json({
+      EM: data.EM, //error message
+      EC: data.EC, //error code
+      DT: data.DT, //data
+    });
+  } catch (error) {
+    return await res.status(500).json({
+      EM: "Something went wrong in controller..." + error, //error message
+      EC: -1, //error code
+      DT: "", //data
+    });
+  }
+};
+
+const handleGetGenreOption = async (req, res) => {
+  try {
+    let data = await getGenreOption();
     return await res.status(200).json({
       EM: data.EM, //error message
       EC: data.EC, //error code
@@ -162,6 +180,7 @@ const handleDeleteGenre = async (req, res) => {
 
 export {
   handleGetAllGenre,
+  handleGetGenreOption,
   handleCreateNewGenre,
   handleGetGenreWithId,
   handleUpdateGenre,

@@ -47,7 +47,8 @@ const handleGetAllSongs = async (req, res) => {
 
 const handleCreateNewSong = async (req, res) => {
   try {
-    const { title, duration, lyrics, genreId, ownerId, albumId } = req.body;
+    const { title, duration, lyrics, genreId, ownerId, albumId, featureId } =
+      req.body;
 
     const coverFile = req.files?.cover?.[0];
     const audioFile = req.files?.audioUrl?.[0];
@@ -60,7 +61,7 @@ const handleCreateNewSong = async (req, res) => {
       ? `uploads/song/audio/${audioFile.filename}`
       : null;
 
-    if (!title || !duration || !lyrics || !genreId || !ownerId) {
+    if (!title || !duration || !lyrics || !ownerId || genreId.length < 0) {
       return await res.status(400).json({
         EM: "Missing required data", //error message
         EC: -1, //error code
@@ -85,6 +86,7 @@ const handleCreateNewSong = async (req, res) => {
       albumId,
       cover: coverPath,
       audioUrl: audioPath,
+      featureId,
     });
     return await res.status(200).json({
       EM: data.EM, //error message

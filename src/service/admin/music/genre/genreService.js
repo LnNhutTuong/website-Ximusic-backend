@@ -2,6 +2,15 @@ import { where } from "sequelize";
 import db from "../../../../models/index";
 import { deleteFile } from "../../../../utils/fileHelper";
 
+const countSongInGenre = async (genreId) => {
+  const songCount = await db.SongGenre.count({
+    where: {
+      genreId,
+    },
+  });
+  return songCount;
+};
+
 const fetchAllGenre = async (page, limit) => {
   let genres = [];
 
@@ -11,6 +20,10 @@ const fetchAllGenre = async (page, limit) => {
       limit: limit,
       order: [["id", "ASC"]],
     });
+
+    for (let genre of genres.rows) {
+      genre.dataValues.songCount = await countSongInGenre(genre.id);
+    }
 
     return {
       EM: "Fetch genre successfully",
@@ -24,6 +37,18 @@ const fetchAllGenre = async (page, limit) => {
       DT: "", //data
     };
   }
+};
+
+const getGenreOption = async () => {
+  let genres = await db.Genre.findAndCountAll({
+    attributes: ["id", "name"],
+    order: [["name", "ASC"]],
+  });
+  return {
+    EM: "Get Genre Option Successfully", //error message
+    EC: 0, //error code
+    DT: genres, //data
+  };
 };
 
 const createNewGenre = async (rawData) => {
@@ -100,7 +125,7 @@ const updateGenre = async (id, rawData) => {
   };
 };
 const hasSongInGenre = async (genreId) => {
-  const songUsed = await db.Song.findOne({
+  const songUsed = await db.SongGenre.findOne({
     where: { genreId },
   });
 
@@ -119,9 +144,18 @@ const deleteGenre = async (genreId) => {
       };
     }
 
+    const genre = await db.Genre.findOne({
+      where: { id: genreId },
+    });
+
+    if (genre.icon) {
+      deleteFile(genre.icon);
+    }
+
     await db.Genre.destroy({
       where: { id: genreId },
     });
+
     return {
       EM: "Delete Genre Successfully",
       EC: 0,
@@ -136,6 +170,7 @@ const deleteGenre = async (genreId) => {
 };
 export {
   fetchAllGenre,
+  getGenreOption,
   createNewGenre,
   getGenreWithId,
   updateGenre,

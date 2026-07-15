@@ -14,12 +14,12 @@ module.exports = (sequelize, DataTypes) => {
         as: "owner",
       });
 
-      //nhung thang tham gia bai hat nay
+      // những người featured trong bài hát này
       this.belongsToMany(models.User, {
-        through: models.SongArtist,
+        through: models.SongFeatured,
         foreignKey: "songId",
-        otherKey: "ownerId",
-        as: "artists",
+        otherKey: "featureId",
+        as: "features",
       });
 
       // Album

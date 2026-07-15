@@ -20,10 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         as: "ownedSongs",
       });
 
-      //nhung bai nhac ma thang nay tham gia
+      //nhung bai nhac ma thang nay feat
       this.belongsToMany(models.Song, {
-        through: models.SongArtist,
-        foreignKey: "artistId",
+        through: models.SongFeatured,
+        foreignKey: "featureId",
         otherKey: "songId",
         as: "songs",
       });

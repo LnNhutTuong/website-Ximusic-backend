@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("SongArtists", {
+    await queryInterface.createTable("SongFeatured", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,17 +11,23 @@ module.exports = {
       },
       songId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "Songs",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
-      ownerId: {
+      featureId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "Users",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
@@ -32,8 +38,14 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
+
+    await queryInterface.addConstraint("SongFeatured", {
+      fields: ["songId", "featureId"],
+      type: "unique",
+      name: "unique_song_feature",
+    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("SongArtists");
+    await queryInterface.dropTable("SongFeatured");
   },
 };

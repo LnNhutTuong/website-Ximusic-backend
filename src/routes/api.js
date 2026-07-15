@@ -36,6 +36,7 @@ import {
 import {
   handleGetAllSongs,
   handleCreateNewSong,
+  handleGetSongWithId,
 } from "../controller/admin/music/song/songController";
 
 const router = express.Router(); // router cha
@@ -102,6 +103,7 @@ const initApiRoutes = (app) => {
   //Song
   const uploadSong = createUploadMiddleware("song");
   privateRouter.get("/song", handleGetAllSongs);
+  privateRouter.get("/song/:id", handleGetSongWithId);
   privateRouter.post(
     "/song/create",
     uploadSong.fields([

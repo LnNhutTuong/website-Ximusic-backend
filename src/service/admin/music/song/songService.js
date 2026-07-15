@@ -56,7 +56,7 @@ const createNewSong = async (rawData) => {
     }
 
     if (rawData.featureId?.length > 0) {
-      features = await newSong.setArtists(rawData.featureId);
+      features = await newSong.setFeatures(rawData.featureId);
     }
 
     return {
@@ -73,4 +73,40 @@ const createNewSong = async (rawData) => {
   }
 };
 
-export { songCount, getAllSongs, createNewSong };
+const getSongWithId = async (songId) => {
+  try {
+    //song info
+    let song = await db.Song.findOne({
+      where: { id: songId },
+      include: [
+        {
+          model: db.Genre,
+          as: "genres",
+          attributes: ["id", "name"],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: db.User,
+          as: "features",
+          attributes: ["id"],
+        },
+      ],
+    });
+
+    return {
+      EM: "Get Song with Id Successfully",
+      EC: 0,
+      DT: song,
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error, //error message
+      EC: -2, //error code
+      DT: "", //data
+    };
+  }
+};
+
+export { songCount, getAllSongs, createNewSong, getSongWithId };

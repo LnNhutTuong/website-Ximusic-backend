@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class SongArtist extends Model {
+  class SongFeatured extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -19,28 +19,37 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  SongArtist.init(
+  SongFeatured.init(
     {
       songId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "Songs",
+          key: "id",
+        },
       },
 
       featureId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-      },
-
-      role: {
-        type: DataTypes.ENUM("MAIN", "FEATURED"),
-        allowNull: false,
-        defaultValue: "MAIN",
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
     },
     {
       sequelize,
-      modelName: "SongArtist",
+      modelName: "SongFeatured",
+      tableName: "SongFeatured",
+      indexes: [
+        {
+          unique: true,
+          fields: ["songId", "featureId"],
+        },
+      ],
     },
   );
-  return SongArtist;
+  return SongFeatured;
 };

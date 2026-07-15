@@ -1,6 +1,7 @@
 import {
   getAllSongs,
   createNewSong,
+  getSongWithId,
 } from "../../../../service/admin/music/song/songService";
 
 const handleGetAllSongs = async (req, res) => {
@@ -102,4 +103,32 @@ const handleCreateNewSong = async (req, res) => {
   }
 };
 
-export { handleGetAllSongs, handleCreateNewSong };
+const handleGetSongWithId = async (req, res) => {
+  try {
+    let id = req.params.id;
+    console.log(">>>>check id: ", id);
+    if (!id) {
+      return await res.status(400).json({
+        EM: "Missing required parameter", //error message
+        EC: -1, //error code
+        DT: "", //data
+      });
+    }
+
+    let data = await getSongWithId(id);
+
+    return await res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return await res.status(500).json({
+      EM: "Something went wrong in controller... abc" + error, //error message
+      EC: -1, //error code
+      DT: "", //data
+    });
+  }
+};
+
+export { handleGetAllSongs, handleCreateNewSong, handleGetSongWithId };

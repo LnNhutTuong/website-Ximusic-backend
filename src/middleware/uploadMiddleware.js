@@ -16,12 +16,17 @@ const createUploadMiddleware = (folderPath) => {
       cb(null, dir);
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      // Lấy tên file gốc hoặc đặt tên theo fieldname
-      cb(
-        null,
-        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname),
-      );
+      const ext = path.extname(file.originalname);
+
+      const title = req.body.title
+        ? req.body.title
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\p{L}\p{N}-]/gu, "")
+        : file.fieldname;
+
+      cb(null, `${title}-${Date.now()}${ext}`);
     },
   });
 

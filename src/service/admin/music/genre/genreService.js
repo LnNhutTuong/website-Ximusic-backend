@@ -124,6 +124,7 @@ const updateGenre = async (id, rawData) => {
     EM: "Update genre successfully",
   };
 };
+
 const hasSongInGenre = async (genreId) => {
   const songUsed = await db.SongGenre.findOne({
     where: { genreId },

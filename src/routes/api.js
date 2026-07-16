@@ -37,6 +37,7 @@ import {
   handleGetAllSongs,
   handleCreateNewSong,
   handleGetSongWithId,
+  handleUpdateSong,
 } from "../controller/admin/music/song/songController";
 
 const router = express.Router(); // router cha
@@ -111,6 +112,14 @@ const initApiRoutes = (app) => {
       { name: "audioUrl", maxCount: 1 },
     ]),
     handleCreateNewSong,
+  );
+  privateRouter.put(
+    "/song/update/:id",
+    uploadSong.fields([
+      { name: "cover", maxCount: 1 },
+      { name: "audioUrl", maxCount: 1 },
+    ]),
+    handleUpdateSong,
   );
 
   return app.use("/api/v1", router);

@@ -38,6 +38,7 @@ import {
   handleCreateNewSong,
   handleGetSongWithId,
   handleUpdateSong,
+  handleDeleteSong,
 } from "../controller/admin/music/song/songController";
 
 const router = express.Router(); // router cha
@@ -99,7 +100,6 @@ const initApiRoutes = (app) => {
     handleUpdateGenre,
   );
   privateRouter.delete("/genre/delete/:id", handleDeleteGenre);
-  router.use(privateRouter);
 
   //Song
   const uploadSong = createUploadMiddleware("song");
@@ -121,6 +121,9 @@ const initApiRoutes = (app) => {
     ]),
     handleUpdateSong,
   );
+  privateRouter.delete("/song/delete/:id", handleDeleteSong);
+
+  router.use(privateRouter);
 
   return app.use("/api/v1", router);
 };

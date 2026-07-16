@@ -161,4 +161,52 @@ const updateSong = async (id, rawData) => {
   };
 };
 
-export { songCount, getAllSongs, createNewSong, getSongWithId, updateSong };
+const deleteSong = async (songId) => {
+  try {
+    const song = await db.Song.findOne({
+      where: { id: songId },
+    });
+
+    if (!song) {
+      return {
+        EM: "Can not find this song",
+        EC: -2,
+      };
+    }
+
+    if (song.cover) {
+      deleteFile(song.cover);
+    }
+
+    if (song.audioUrl) {
+      deleteFile(song.audioUrl);
+    }
+    await song.setGenres([]);
+
+    await song.setFeatures([]);
+
+    await song.destroy({
+      where: { id: songId },
+    });
+
+    return {
+      EM: "Delete Song Successfully",
+      EC: 0,
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: "",
+    };
+  }
+};
+
+export {
+  songCount,
+  getAllSongs,
+  createNewSong,
+  getSongWithId,
+  updateSong,
+  deleteSong,
+};

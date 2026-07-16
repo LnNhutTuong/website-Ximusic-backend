@@ -169,6 +169,7 @@ const deleteGenre = async (genreId) => {
     };
   }
 };
+
 export {
   fetchAllGenre,
   getGenreOption,

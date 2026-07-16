@@ -3,6 +3,7 @@ import {
   createNewSong,
   getSongWithId,
   updateSong,
+  deleteSong,
 } from "../../../../service/admin/music/song/songService";
 
 const handleGetAllSongs = async (req, res) => {
@@ -193,9 +194,22 @@ const handleUpdateSong = async (req, res) => {
   }
 };
 
+const handleDeleteSong = async (req, res) => {
+  const songId = req.params.id;
+
+  let data = await deleteSong(songId);
+
+  return await res.status(200).json({
+    EM: data.EM, //error message
+    EC: data.EC, //error code
+    DT: data.DT, //data
+  });
+};
+
 export {
   handleGetAllSongs,
   handleCreateNewSong,
   handleGetSongWithId,
   handleUpdateSong,
+  handleDeleteSong,
 };

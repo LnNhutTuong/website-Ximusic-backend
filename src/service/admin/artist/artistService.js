@@ -1,5 +1,5 @@
 import db from "../../../models/index";
-import { Op, where } from "sequelize";
+import { Op, where, literal } from "sequelize";
 
 const handleGetArtistWithId = async (userId) => {
   try {
@@ -25,8 +25,19 @@ const getAllArtistOption = async () => {
       where: {
         groupId: 2,
       },
-      attributes: ["id", "displayName"],
-      order: [["displayName", "ASC"]],
+
+      attributes: [
+        "id",
+        [
+          literal(
+            `COALESCE(\`artistProfile\`.\`stageName\`,
+          \`user\`.\`displayName\`)`,
+          ),
+          "artistName",
+        ],
+      ],
+
+      order: [["artistName", "ASC"]],
       include: [
         {
           model: db.ArtistProfile,
@@ -34,7 +45,7 @@ const getAllArtistOption = async () => {
           where: {
             verified: 1,
           },
-          attributes: ["stageName"],
+          attributes: [],
         },
       ],
     });

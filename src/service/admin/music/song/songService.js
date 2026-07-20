@@ -1,5 +1,5 @@
 import db from "../../../../models/index";
-import { Op, where, findOrCreate } from "sequelize";
+import { Op, where, findOrCreate, literal } from "sequelize";
 import { deleteFile } from "../../../../utils/fileHelper";
 
 const songCount = async (ownerId) => {
@@ -87,7 +87,15 @@ const getSongWithId = async (songId) => {
         {
           model: db.User,
           as: "features",
-          attributes: ["id", "displayName"],
+          attributes: [
+            "id",
+            [
+              literal(
+                "COALESCE(`features->artistProfile`.`stageName`, `features`.`displayName`)",
+              ),
+              "artistName",
+            ],
+          ],
           through: {
             attributes: [],
           },
@@ -95,7 +103,7 @@ const getSongWithId = async (songId) => {
             {
               model: db.ArtistProfile,
               as: "artistProfile",
-              attributes: ["stageName"],
+              attributes: [],
             },
           ],
         },

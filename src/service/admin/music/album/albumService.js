@@ -1,5 +1,6 @@
 import db from "../../../../models/index";
-import { Op, where, findOrCreate } from "sequelize";
+import { Op, where, findOrCreate, literal } from "sequelize";
+import { deleteFile } from "../../../../utils/fileHelper";
 
 const albumCount = async (ownerId) => {
   const album = await db.Album.count({
@@ -32,4 +33,75 @@ const getAlbumOptionWithIdOrNot = async (ownerId) => {
   };
 };
 
-export { albumCount, getAlbumOptionWithIdOrNot };
+const countSongInAlbum = async (albumId) => {
+  const songCount = await db.Song.count({
+    where: { albumId },
+  });
+  return songCount;
+};
+
+const getListAlbum = async () => {
+  try {
+    let albums = await db.Album.findAndCountAll({
+      attributes: {
+        include: [
+          [
+            literal(
+              `COALESCE(\`artist->artistProfile\`.\`stageName\`,
+          \`artist\`.\`displayName\`)`,
+            ),
+            "artistName",
+          ],
+        ],
+      },
+      include: [
+        {
+          model: db.User,
+          as: "artist",
+          attributes: [],
+          include: [
+            { model: db.ArtistProfile, as: "artistProfile", attributes: [] },
+          ],
+        },
+      ],
+    });
+
+    for (let album of albums.rows) {
+      album.dataValues.songCount = await countSongInAlbum(album.id);
+    }
+
+    return {
+      EM: "get list Album Successfully",
+      EC: 0,
+      DT: albums,
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+const getAlbumWithId = async (albumId) => {
+  try {
+    let album = await db.Album.findOne({
+      where: { id: albumId },
+    });
+
+    return {
+      EM: "Successfully",
+      EC: 0,
+      DT: album,
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+export { albumCount, getAlbumOptionWithIdOrNot, getListAlbum, getAlbumWithId };

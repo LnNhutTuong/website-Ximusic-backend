@@ -22,7 +22,11 @@ import {
 
 import { handleGetAllArtistOption } from "../controller/admin/artist/artistController";
 
-import { handleAlbumOptionWithIdOrNot } from "../controller/admin/music/album/albumController";
+import {
+  handleAlbumOptionWithIdOrNot,
+  handleGetAlbumWithId,
+  handleGetListAlbums,
+} from "../controller/admin/music/album/albumController";
 
 import {
   handleGetAllGenre,
@@ -75,14 +79,17 @@ const initApiRoutes = (app) => {
   privateRouter.put("/user/update/:id", handleUpdateUser);
   privateRouter.delete("/user/delete/:id", handleDelete);
 
+  //Group
+  privateRouter.get("/group", getAllGroup);
+
   //Artist
   privateRouter.get("/artist/option", handleGetAllArtistOption);
 
   //Album
+  const uploadAlbum = createUploadMiddleware("album");
   privateRouter.get("/album/option", handleAlbumOptionWithIdOrNot);
-
-  //Group
-  privateRouter.get("/group", getAllGroup);
+  privateRouter.get("/album", handleGetListAlbums);
+  privateRouter.get("/album/:id", handleGetListAlbums);
 
   //Genre
   const uploadGenre = createUploadMiddleware("genre");

@@ -35,9 +35,41 @@ const getAllSongs = async (page, limit) => {
   }
 };
 
+const getSongOptionWithIdOrNot = async (ownerId) => {
+  try {
+    let songs;
+    let EM;
+    if (!ownerId) {
+      songs = await db.Song.findAndCountAll({
+        attributes: ["id", "title"],
+        order: [["title", "ASC"]],
+      });
+      EM = "Get Song Option Successfully";
+    } else {
+      songs = await db.Song.findAndCountAll({
+        where: { ownerId },
+        attributes: ["id", "title"],
+        order: [["title", "ASC"]],
+      });
+      EM = "Get Song Option With ID Successfully";
+    }
+
+    return {
+      EM: EM, //error message
+      EC: 0, //error code
+      DT: songs, //data
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const createNewSong = async (rawData) => {
   try {
-    console.log(">>>Check genre:", rawData.genreId);
     let newSong;
     let songGenre;
     let features;
@@ -213,6 +245,7 @@ const deleteSong = async (songId) => {
 export {
   songCount,
   getAllSongs,
+  getSongOptionWithIdOrNot,
   createNewSong,
   getSongWithId,
   updateSong,

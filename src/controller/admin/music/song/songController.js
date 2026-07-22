@@ -1,5 +1,6 @@
 import {
   getAllSongs,
+  getSongOptionWithIdOrNot,
   createNewSong,
   getSongWithId,
   updateSong,
@@ -44,6 +45,26 @@ const handleGetAllSongs = async (req, res) => {
       EM: "Something went wrong in controller..." + error, //error message
       EC: -1, //error code
       DT: "", //data
+    });
+  }
+};
+
+const handleGetSongOptionWithIdOrNot = async (req, res) => {
+  try {
+    const id = req.query.id || null;
+
+    const data = await getSongOptionWithIdOrNot(id);
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Something went wrong in controller..." + error,
+      EC: -1,
+      DT: "",
     });
   }
 };
@@ -208,6 +229,7 @@ const handleDeleteSong = async (req, res) => {
 
 export {
   handleGetAllSongs,
+  handleGetSongOptionWithIdOrNot,
   handleCreateNewSong,
   handleGetSongWithId,
   handleUpdateSong,

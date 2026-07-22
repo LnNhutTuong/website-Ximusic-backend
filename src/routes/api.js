@@ -26,6 +26,7 @@ import {
   handleAlbumOptionWithIdOrNot,
   handleGetAlbumWithId,
   handleGetListAlbums,
+  handleCreateNewAlbum,
 } from "../controller/admin/music/album/albumController";
 
 import {
@@ -39,6 +40,7 @@ import {
 
 import {
   handleGetAllSongs,
+  handleGetSongOptionWithIdOrNot,
   handleCreateNewSong,
   handleGetSongWithId,
   handleUpdateSong,
@@ -90,6 +92,11 @@ const initApiRoutes = (app) => {
   privateRouter.get("/album/option", handleAlbumOptionWithIdOrNot);
   privateRouter.get("/album", handleGetListAlbums);
   privateRouter.get("/album/:id", handleGetListAlbums);
+  privateRouter.post(
+    "/album/create",
+    uploadAlbum.single("cover"),
+    handleCreateNewAlbum,
+  );
 
   //Genre
   const uploadGenre = createUploadMiddleware("genre");
@@ -111,6 +118,7 @@ const initApiRoutes = (app) => {
   //Song
   const uploadSong = createUploadMiddleware("song");
   privateRouter.get("/song", handleGetAllSongs);
+  privateRouter.get("/song/option", handleGetSongOptionWithIdOrNot);
   privateRouter.get("/song/:id", handleGetSongWithId);
   privateRouter.post(
     "/song/create",

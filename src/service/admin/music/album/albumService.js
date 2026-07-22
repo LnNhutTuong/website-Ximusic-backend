@@ -104,4 +104,47 @@ const getAlbumWithId = async (albumId) => {
   }
 };
 
-export { albumCount, getAlbumOptionWithIdOrNot, getListAlbum, getAlbumWithId };
+const createNewAlbum = async (rawData) => {
+  try {
+    let newAlbum;
+    let songBelongsTo;
+
+    newAlbum = await db.Album.create({
+      title: rawData.title.trim(),
+      cover: rawData.cover,
+      ownerId: rawData.ownerId,
+      releaseDate: rawData.releaseDate || null,
+    });
+
+    if (rawData.songChoose) {
+      await db.Song.update(
+        { albumId: album.id },
+        {
+          where: {
+            id: rawData.songChoose,
+          },
+        },
+      );
+    }
+
+    return {
+      EM: "Successfully",
+      EC: 0,
+      DT: { "New Album": newAlbum, "Song belongs": songBelongsTo },
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
+export {
+  albumCount,
+  getAlbumOptionWithIdOrNot,
+  getListAlbum,
+  getAlbumWithId,
+  createNewAlbum,
+};

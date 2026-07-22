@@ -45,12 +45,13 @@ const handleGetListAlbums = async (req, res) => {
 
 const handleGetAlbumWithId = async (req, res) => {
   try {
-    const id = req.query.id || null;
+    let id = req.params.id;
 
     if (!id) {
       return res.status(400).json({
         EM: "Missing required data...",
         EC: -1,
+        DT: req.query,
       });
     }
 
@@ -72,13 +73,9 @@ const handleGetAlbumWithId = async (req, res) => {
 
 const handleCreateNewAlbum = async (req, res) => {
   try {
-    const { title, cover, ownerId, songChoose, releaseDate } = req.body;
+    const { title, cover, ownerId, songId, releaseDate } = req.body;
 
-    if (
-      !title ||
-      !ownerId ||
-      (releaseDate && (!Array.isArray(songChoose) || songChoose.length === 0))
-    ) {
+    if (!title || !ownerId || (releaseDate && !songId)) {
       return res.status(400).json({
         EM: "Missing required parameters controller", //error message
         EC: 0, //error code
@@ -96,7 +93,7 @@ const handleCreateNewAlbum = async (req, res) => {
       title,
       cover: coverPath,
       ownerId,
-      songChoose,
+      songId,
       releaseDate,
     });
 

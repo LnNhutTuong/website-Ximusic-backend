@@ -89,9 +89,9 @@ const initApiRoutes = (app) => {
 
   //Album
   const uploadAlbum = createUploadMiddleware("album");
-  privateRouter.get("/album/option", handleAlbumOptionWithIdOrNot);
   privateRouter.get("/album", handleGetListAlbums);
-  privateRouter.get("/album/:id", handleGetListAlbums);
+  privateRouter.get("/album/:id", handleGetAlbumWithId);
+  privateRouter.get("/album/option", handleAlbumOptionWithIdOrNot);
   privateRouter.post(
     "/album/create",
     uploadAlbum.single("cover"),

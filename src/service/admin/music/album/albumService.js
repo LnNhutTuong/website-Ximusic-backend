@@ -88,6 +88,11 @@ const getAlbumWithId = async (albumId) => {
   try {
     let album = await db.Album.findOne({
       where: { id: albumId },
+      include: {
+        model: db.Song,
+        as: "songs",
+        attributes: ["id", "title"],
+      },
     });
 
     return {
@@ -116,12 +121,12 @@ const createNewAlbum = async (rawData) => {
       releaseDate: rawData.releaseDate || null,
     });
 
-    if (rawData.songChoose) {
+    if (rawData.songId) {
       await db.Song.update(
-        { albumId: album.id },
+        { albumId: newAlbum.id },
         {
           where: {
-            id: rawData.songChoose,
+            id: rawData.songId,
           },
         },
       );

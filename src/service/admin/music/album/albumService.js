@@ -14,7 +14,7 @@ const albumCount = async (ownerId) => {
 const getAlbumOptionWithIdOrNot = async (ownerId) => {
   let albums;
   let EM;
-  if (ownerId === null || ownerId === undefined) {
+  if (ownerId === null) {
     albums = await db.Album.findAndCountAll();
     EM = "Get Album Option Successfully";
   } else {
@@ -23,7 +23,12 @@ const getAlbumOptionWithIdOrNot = async (ownerId) => {
       attributes: ["id", "title"],
       order: [["title", "ASC"]],
     });
-    EM = "Get Album Option With ID Successfully";
+
+    if (albums.count === 0) {
+      EM = "This artist doesn't have any album";
+    } else {
+      EM = "Get Album Option With ID Successfully";
+    }
   }
 
   return {
@@ -96,7 +101,7 @@ const getAlbumWithId = async (albumId) => {
     });
 
     return {
-      EM: "Successfully",
+      EM: "Get Album with ID Successfully",
       EC: 0,
       DT: album,
     };
@@ -146,10 +151,47 @@ const createNewAlbum = async (rawData) => {
   }
 };
 
+const deleteAlbum = async (albumId) => {
+  try {
+    const albumDelete = await db.Album.findOne({
+      where: { id: albumId },
+    });
+
+    if (!albumDelete) {
+      return {
+        EM: "Can't find this album in db to delete",
+        EC: -1,
+        DT: [],
+      };
+    }
+
+    if (albumDelete.cover) {
+      deleteFile(albumDelete.cover);
+    }
+
+    await db.Song.update({ albumId: null }, { where: { albumId } });
+
+    await albumDelete.destroy();
+
+    return {
+      EM: "Delete Album Successfully",
+      EC: 0,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      EM: "Something went wrong in service...",
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 export {
   albumCount,
   getAlbumOptionWithIdOrNot,
   getListAlbum,
   getAlbumWithId,
   createNewAlbum,
+  deleteAlbum,
 };

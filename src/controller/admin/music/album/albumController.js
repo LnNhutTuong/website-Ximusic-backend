@@ -3,13 +3,14 @@ import {
   getListAlbum,
   getAlbumWithId,
   createNewAlbum,
+  deleteAlbum,
 } from "../../../../service/admin/music/album/albumService";
 
 const handleAlbumOptionWithIdOrNot = async (req, res) => {
   try {
-    const id = req.query.id || null;
+    let id = req.query.id || null;
 
-    const data = await getAlbumOptionWithIdOrNot(id);
+    let data = await getAlbumOptionWithIdOrNot(id);
 
     return res.status(200).json({
       EM: data.EM,
@@ -110,9 +111,30 @@ const handleCreateNewAlbum = async (req, res) => {
   }
 };
 
+const handleDeleteAlbum = async (req, res) => {
+  try {
+    let id = req.params.id;
+
+    let data = await deleteAlbum(id);
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Something went wrong in controller..." + error,
+      EC: -2,
+      DT: "",
+    });
+  }
+};
+
 export {
   handleAlbumOptionWithIdOrNot,
   handleGetAlbumWithId,
   handleGetListAlbums,
   handleCreateNewAlbum,
+  handleDeleteAlbum,
 };

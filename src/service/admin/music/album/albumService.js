@@ -151,6 +151,59 @@ const createNewAlbum = async (rawData) => {
   }
 };
 
+const updateAlbum = async (albumId, rawData) => {
+  try {
+    let albumUpdate = await db.Album.findOne({ where: { id: albumId } });
+
+    if (!albumUpdate) {
+      return {
+        EM: "Can't find this album in db to update",
+        EC: -1,
+      };
+    }
+
+    if (rawData.hasNewCover && albumUpdate.cover) {
+      deleteFile(albumUpdate.cover);
+    }
+
+    const nextCover = rawData.hasNewCover ? rawData.cover : albumUpdate.cover;
+
+    console.log(">>>check true/false: ", rawData.hasNewCover);
+
+    await albumUpdate.update({
+      title: rawData.title.trim(),
+      cover: nextCover,
+      ownerId: rawData.ownerId,
+      releaseDate: new Date(rawData.releaseDate) || null,
+    });
+
+    if (rawData.songId) {
+      await db.Song.update(
+        { albumId: updateAlbum.id },
+        {
+          where: {
+            id: rawData.songId,
+          },
+        },
+      );
+    }
+
+    let albumAfterUpdate = await db.Album.findByPk(albumId);
+
+    return {
+      EM: "Update Album Successfully",
+      EC: 0,
+      DT: albumAfterUpdate,
+    };
+  } catch (error) {
+    return {
+      EM: "Something went wrong in service..." + error,
+      EC: -2,
+      DT: [],
+    };
+  }
+};
+
 const deleteAlbum = async (albumId) => {
   try {
     const albumDelete = await db.Album.findOne({
@@ -193,5 +246,6 @@ export {
   getListAlbum,
   getAlbumWithId,
   createNewAlbum,
+  updateAlbum,
   deleteAlbum,
 };

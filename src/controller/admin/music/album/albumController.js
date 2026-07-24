@@ -3,6 +3,7 @@ import {
   getListAlbum,
   getAlbumWithId,
   createNewAlbum,
+  updateAlbum,
   deleteAlbum,
 } from "../../../../service/admin/music/album/albumService";
 
@@ -111,6 +112,56 @@ const handleCreateNewAlbum = async (req, res) => {
   }
 };
 
+const handleUpdateAlbum = async (req, res) => {
+  try {
+    const albumId = req.params.id;
+
+    const { title, cover, ownerId, songId, releaseDate } = req.body;
+
+    let coverFile = null;
+    let coverPath = null;
+
+    if (req.file) {
+      coverFile = req.file;
+    }
+
+    console.log(">>>check coverFile: ", coverFile);
+
+    if (coverFile) {
+      coverPath = `uploads/album/cover/${coverFile.filename}`;
+    }
+
+    if (!title || !ownerId || (releaseDate && !songId)) {
+      return res.status(400).json({
+        EM: "Missing required parameters controller", //error message
+        EC: 0, //error code
+        DT: req.body,
+      });
+    }
+
+    let data = await updateAlbum(albumId, {
+      title,
+      hasNewCover: !!coverFile,
+      cover: coverPath,
+      ownerId,
+      songId,
+      releaseDate,
+    });
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "Something went wrong in controller..." + error,
+      EC: -2,
+      DT: "",
+    });
+  }
+};
+
 const handleDeleteAlbum = async (req, res) => {
   try {
     let id = req.params.id;
@@ -136,5 +187,6 @@ export {
   handleGetAlbumWithId,
   handleGetListAlbums,
   handleCreateNewAlbum,
+  handleUpdateAlbum,
   handleDeleteAlbum,
 };

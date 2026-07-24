@@ -168,8 +168,6 @@ const updateAlbum = async (albumId, rawData) => {
 
     const nextCover = rawData.hasNewCover ? rawData.cover : albumUpdate.cover;
 
-    console.log(">>>check true/false: ", rawData.hasNewCover);
-
     await albumUpdate.update({
       title: rawData.title.trim(),
       cover: nextCover,

@@ -125,8 +125,6 @@ const handleUpdateAlbum = async (req, res) => {
       coverFile = req.file;
     }
 
-    console.log(">>>check coverFile: ", coverFile);
-
     if (coverFile) {
       coverPath = `uploads/album/cover/${coverFile.filename}`;
     }
